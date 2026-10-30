@@ -13,7 +13,7 @@ The tools this project uses, chosen with the user during setup. The other docs n
 | Linter                          | Oxlint, type-aware through oxlint-tsgolint, with the vendored anti-slop plugin (`tools/oxlint/anti-slop/`) |
 | Formatter                       | Oxfmt                                                                                                      |
 | Type checker                    | tsrs (Rust port of the TypeScript 7 compiler)                                                              |
-| Schema validation at boundaries | Zod                                                                                                        |
+| Schema validation at boundaries | Zod, imported as `zod/mini`                                                                                |
 | Unit and integration runner     | Vitest                                                                                                     |
 | Property-based testing          | fast-check                                                                                                 |
 | Mutation testing                | StrykerJS (Vitest runner)                                                                                  |
