@@ -97,3 +97,32 @@ export async function clickRelationLine(page: Page): Promise<void> {
 
   await page.mouse.click(point.x, point.y);
 }
+
+// The schema the editor opens on the next load, as stored in IndexedDB
+async function storedCurrentSchema(page: Page): Promise<string> {
+  return await page.evaluate(async () => {
+    // oxlint-disable-next-line unicorn/consistent-function-scoping -- page.evaluate sends only this callback to the browser
+    async function settled<T>(request: IDBRequest<T>): Promise<T> {
+      return await new Promise((resolve, reject) => {
+        request.addEventListener('success', () => resolve(request.result));
+        request.addEventListener('error', () => reject(request.error));
+      });
+    }
+
+    const database = await settled(indexedDB.open('schemata'));
+    const schemas = database.transaction('schemas').objectStore('schemas');
+    const currentId: unknown = await settled(schemas.get('current-schema-id'));
+    const schema: unknown = await settled(schemas.get(`schema-${String(currentId)}`));
+
+    database.close();
+
+    return JSON.stringify(schema ?? null);
+  });
+}
+
+// Saving runs after the canvas updates, so the reload waits until storage holds the last edit
+export async function reloadOnceStored(page: Page, lastEdit: string): Promise<void> {
+  await expect.poll(async () => await storedCurrentSchema(page)).toContain(lastEdit);
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Add Table' })).toBeVisible();
+}

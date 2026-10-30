@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-import localforage from 'localforage';
+import { clear, createStore, get, set } from 'idb-keyval';
 import { ReactNode } from 'react';
 import { beforeEach, expect, it } from 'vitest';
 import { useLocalSchemaQuery } from '@/queries/useSchemaQuery';
@@ -33,30 +33,35 @@ function renderSave(queryClient: QueryClient) {
   );
 }
 
+const store = createStore('schemata', 'schemas');
+
 beforeEach(async () => {
-  await localforage.clear();
+  await clear(store);
 });
 
 it('keeps the stored name when the new schema has a blank name', async () => {
-  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
+  await set('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop, store);
   const { result } = renderSave(new QueryClient());
 
   await result.current.mutateAsync((current) => ({ ...current, name: '', positions: [position] }));
 
-  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
-    { ...shop, name: 'Shop', positions: [position] },
-  );
+  await expect(get('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', store)).resolves.toEqual({
+    ...shop,
+    name: 'Shop',
+    positions: [position],
+  });
 });
 
 it('applies an updater to the stored schema', async () => {
-  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
+  await set('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop, store);
   const { result } = renderSave(new QueryClient());
 
   await result.current.mutateAsync((current) => ({ ...current, positions: [position] }));
 
-  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
-    { ...shop, positions: [position] },
-  );
+  await expect(get('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', store)).resolves.toEqual({
+    ...shop,
+    positions: [position],
+  });
 });
 
 it('falls back to the cached schema when storage has none', async () => {
@@ -66,9 +71,10 @@ it('falls back to the cached schema when storage has none', async () => {
 
   await result.current.mutateAsync((current) => ({ ...current, positions: [position] }));
 
-  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
-    { ...shop, positions: [position] },
-  );
+  await expect(get('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', store)).resolves.toEqual({
+    ...shop,
+    positions: [position],
+  });
 });
 
 it('rejects when neither storage nor the cache holds the schema', async () => {
@@ -77,53 +83,53 @@ it('rejects when neither storage nor the cache holds the schema', async () => {
   await expect(result.current.mutateAsync(() => ({ ...shop, name: 'Store' }))).rejects.toThrow(
     'Schema not found',
   );
-  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toBe(
-    null,
-  );
+  await expect(get('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', store)).resolves.toBeUndefined();
 });
 
 it('leaves a stored schema that fails validation untouched', async () => {
-  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', {
-    ...shop,
-    vendor: 'POSTGRES:16',
-  });
+  await set(
+    'schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff',
+    {
+      ...shop,
+      vendor: 'POSTGRES:16',
+    },
+    store,
+  );
   const { result } = renderSave(new QueryClient());
 
   await expect(
     result.current.mutateAsync((current) => ({ ...current, name: 'Store' })),
   ).rejects.toThrow(/vendor/);
-  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
-    { ...shop, vendor: 'POSTGRES:16' },
-  );
+  await expect(get('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', store)).resolves.toEqual({
+    ...shop,
+    vendor: 'POSTGRES:16',
+  });
 });
 
-it('refreshes mounted schema views after saving', async () => {
-  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
+it('refreshes mounted views of the saved schema', async () => {
+  await set('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop, store);
 
   const { result } = renderWithClient(new QueryClient(), () => ({
-    byId: useLocalSchemaQuery('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
-    current: useLocalSchemaQuery(),
+    view: useLocalSchemaQuery('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
     save: useSaveLocalSchema('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
   }));
 
   await waitFor(() => {
-    expect(result.current.byId.data).toEqual(shop);
-    expect(result.current.current.data).toEqual(shop);
+    expect(result.current.view.data).toEqual(shop);
   });
 
   await result.current.save.mutateAsync((current) => ({ ...current, name: 'Store' }));
 
   await waitFor(() => {
-    expect(result.current.byId.data).toEqual({ ...shop, name: 'Store' });
-    expect(result.current.current.data).toEqual({ ...shop, name: 'Store' });
+    expect(result.current.view.data).toEqual({ ...shop, name: 'Store' });
   });
 });
 
 it('leaves views of other schemas alone after saving', async () => {
   const warehouse = { ...shop, id: '0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', name: 'Warehouse' };
 
-  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
-  await localforage.setItem('schema-0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', warehouse);
+  await set('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop, store);
+  await set('schema-0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', warehouse, store);
   const queryClient = new QueryClient();
 
   const { result } = renderWithClient(queryClient, () => ({
@@ -134,10 +140,14 @@ it('leaves views of other schemas alone after saving', async () => {
   await waitFor(() => {
     expect(result.current.other.data).toEqual(warehouse);
   });
-  await localforage.setItem('schema-0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', {
-    ...warehouse,
-    name: 'Depot',
-  });
+  await set(
+    'schema-0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10',
+    {
+      ...warehouse,
+      name: 'Depot',
+    },
+    store,
+  );
 
   await result.current.save.mutateAsync((current) => ({ ...current, name: 'Store' }));
   await waitFor(() => {

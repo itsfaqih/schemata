@@ -29,7 +29,7 @@ test('shares the schema link', async ({ page, step }) => {
     await page.getByRole('button', { name: 'Share link (CTRL + S)' }).click();
 
     await expect(page.getByText('URL copied to clipboard')).toBeVisible();
-    await expect(page).toHaveURL(/\?schema=/);
+    await expect(page).not.toHaveURL(/\?schema=/);
   });
 
   await step('add table "orders" and press Ctrl+S', async () => {

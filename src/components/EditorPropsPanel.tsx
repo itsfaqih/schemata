@@ -1,7 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { useReactFlow } from '@xyflow/react';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { useRouter } from '@tanstack/react-router';
 import { EditorPanelContainer } from './EditorPanelContainer';
 import { IconButton } from './IconButton';
 import { SchemaType } from '@/schemas/schema';
@@ -83,19 +82,12 @@ type ShareLinkButtonProps = {
 
 function ShareLinkButton({ schema }: ShareLinkButtonProps) {
   const [, copy] = useCopyToClipboard();
-  const router = useRouter();
 
   const copyLinkToClipboard = () => {
     const encodedDatabase = schemaToBase64Url(schema);
     const url = `${window.location.origin}/?schema=${encodedDatabase}`;
 
     void copy(url);
-
-    void router.navigate({
-      to: '/',
-      search: { schema: encodedDatabase },
-      replace: true,
-    });
 
     toast.success('URL copied to clipboard');
   };

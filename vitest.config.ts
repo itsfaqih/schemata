@@ -23,7 +23,8 @@ export default mergeConfig(
           test: {
             name: 'integration',
             include: ['src/**/*.int.test.{ts,tsx}'],
-            setupFiles: ['./src/test/integration-setup.ts'],
+            // Test files share one origin and so one IndexedDB; each clears it, so they take turns
+            fileParallelism: false,
             testTimeout: 15_000,
             browser: {
               enabled: true,

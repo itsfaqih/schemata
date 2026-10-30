@@ -1,7 +1,7 @@
-import { localSchemaQuery, readStoredSchema } from '@/queries/useSchemaQuery';
+import { localSchemaQuery } from '@/queries/useSchemaQuery';
 import { SchemaType } from '@/schemas/schema';
+import { readSchema, writeSchema } from '@/utils/schema-storage';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import localforage from 'localforage';
 
 export function useSaveLocalSchema(id: SchemaType['id']) {
   const queryClient = useQueryClient();
@@ -9,8 +9,7 @@ export function useSaveLocalSchema(id: SchemaType['id']) {
   return useMutation({
     mutationFn: async (updateSchema: (currentSchema: SchemaType) => SchemaType) => {
       const currentSchema =
-        (await readStoredSchema(`schema-${id}`)) ??
-        queryClient.getQueryData<SchemaType>(['schema', id]);
+        (await readSchema(id)) ?? queryClient.getQueryData<SchemaType>(['schema', id]);
 
       if (!currentSchema) {
         throw Error('Schema not found');
@@ -18,15 +17,15 @@ export function useSaveLocalSchema(id: SchemaType['id']) {
 
       const newSchema = updateSchema(currentSchema);
 
-      return await localforage.setItem<SchemaType>(`schema-${id}`, {
-        ...newSchema,
-        name: newSchema.name || currentSchema.name,
-      });
+      const savedSchema = { ...newSchema, name: newSchema.name || currentSchema.name };
+
+      await writeSchema(savedSchema);
+
+      return savedSchema;
     },
     onSuccess(savedSchema) {
-      // Refetches in the background; the mutation settles without waiting for them
+      // Refetches in the background; the mutation settles without waiting for it
       void queryClient.invalidateQueries({ queryKey: localSchemaQuery(savedSchema.id).queryKey });
-      void queryClient.invalidateQueries({ queryKey: localSchemaQuery().queryKey });
     },
   });
 }

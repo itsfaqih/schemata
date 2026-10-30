@@ -1,5 +1,12 @@
-import { base64UrlToSchema } from '@/utils/schema';
-import { createRootRoute, createRoute, createRouter, ErrorComponent } from '@tanstack/react-router';
+import { base64UrlToSchema, emptySchemaFactory } from '@/utils/schema';
+import { openSchema, readCurrentSchema } from '@/utils/schema-storage';
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  ErrorComponent,
+  redirect,
+} from '@tanstack/react-router';
 import { z } from 'zod/mini';
 import { Editor } from './Editor';
 
@@ -13,9 +20,26 @@ const editorRoute = createRoute({
     schema: z.optional(z.string()),
   }),
   loaderDeps: ({ search }) => ({ schema: search.schema }),
-  loader: ({ deps }) => ({
-    schema: deps.schema ? base64UrlToSchema(deps.schema) : null,
-  }),
+  // A shared link is imported once and dropped from the address bar, so a reload opens the latest edits
+  loader: async ({ deps }) => {
+    if (deps.schema) {
+      await openSchema(base64UrlToSchema(deps.schema));
+
+      throw redirect({ to: '/', search: {}, replace: true });
+    }
+
+    const storedSchema = await readCurrentSchema();
+
+    if (storedSchema) {
+      return { schema: storedSchema };
+    }
+
+    const schema = emptySchemaFactory();
+
+    await openSchema(schema);
+
+    return { schema };
+  },
   errorComponent: ErrorComponent,
 });
 

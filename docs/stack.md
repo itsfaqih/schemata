@@ -9,6 +9,7 @@ The tools this project uses, chosen with the user during setup. The other docs n
 | Web frontend                    | Vite + React + TanStack Router (the project's own)                                                         |
 | Interactive UI primitives       | Base UI (`@base-ui/react`)                                                                                 |
 | Styling                         | Tailwind CSS 4, configured in `src/index.css` and built by `@tailwindcss/vite`                             |
+| Browser storage                 | idb-keyval (IndexedDB)                                                                                     |
 | Linter                          | Oxlint, type-aware through oxlint-tsgolint, with the vendored anti-slop plugin (`tools/oxlint/anti-slop/`) |
 | Formatter                       | Oxfmt                                                                                                      |
 | Type checker                    | tsrs (Rust port of the TypeScript 7 compiler)                                                              |

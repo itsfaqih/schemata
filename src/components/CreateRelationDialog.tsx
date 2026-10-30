@@ -13,6 +13,7 @@ import { useLocalSchemaQuery } from '@/queries/useSchemaQuery';
 import { useCreateRelation } from '@/flow-hooks/useCreateRelation';
 import { ColumnType } from '@/schemas/column';
 import { TableType } from '@/schemas/table';
+import { SchemaType } from '@/schemas/schema';
 
 export type CreateRelationDialogProps = {
   source: {
@@ -22,11 +23,11 @@ export type CreateRelationDialogProps = {
   setSource: (source: CreateRelationDialogProps['source']) => void;
 };
 
-export function CreateRelationDialog() {
+export function CreateRelationDialog({ schemaId }: { schemaId: SchemaType['id'] }) {
   const { relationDialogSource: source } = useEditorState();
   const { setRelationDialogSource: setSource } = useEditorActions();
 
-  const { data: schema } = useLocalSchemaQuery();
+  const { data: schema } = useLocalSchemaQuery(schemaId);
 
   const {
     control,
