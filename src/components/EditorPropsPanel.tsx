@@ -1,4 +1,3 @@
-import { toPng } from 'html-to-image';
 import { toast } from 'react-hot-toast';
 import { useReactFlow } from '@xyflow/react';
 import { useCopyToClipboard } from 'usehooks-ts';
@@ -11,6 +10,9 @@ import { useEffect } from 'react';
 import { InformationDialog } from './InformationDialog';
 import { ArrowDownTrayIcon, InformationCircleIcon, ShareIcon } from '@heroicons/react/20/solid';
 import { Separator } from './Separator';
+import { deferModule } from '@/utils/defer-module';
+
+const htmlToImage = deferModule(() => import('html-to-image'));
 
 type EditorPropsPanelProps = {
   schema: SchemaType;
@@ -37,6 +39,8 @@ export function EditorPropsPanel({ schema }: EditorPropsPanelProps) {
     if (!canvas || !(canvas instanceof HTMLElement)) {
       return;
     }
+
+    const { toPng } = await htmlToImage.load();
 
     void toPng(canvas, {
       filter: (node) => {
