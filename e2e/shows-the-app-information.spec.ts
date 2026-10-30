@@ -16,11 +16,20 @@ test('shows the app information', async ({ page, step }) => {
       'href',
       'https://github.com/ruine-dev',
     );
+    // Focus lands on Close as the dialog opens; a click is not keyboard focus, so no tooltip shows.
+    await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
   });
 
-  // The Close button's tooltip opens while the dialog is still sliding in and ends up covering the
-  // button, so the dialog is closed by clicking outside it instead.
-  await step('click outside the dialog', async () => {
+  await step('click Close', async () => {
+    await dialog.getByRole('button', { name: 'Close' }).click();
+
+    await expect(dialog).toBeHidden();
+  });
+
+  await step('click Information again, then click outside the dialog', async () => {
+    await page.getByRole('button', { name: 'Information' }).click();
+    await expect(dialog).toBeVisible();
     await page.mouse.click(20, 360);
   });
 

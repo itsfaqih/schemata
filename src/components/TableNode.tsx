@@ -51,7 +51,7 @@ export function TableNode({ id, data: table }: NodeProps<TableNodeType>) {
         </SortableContext>
       </DndContext>
 
-      <Tooltip text="(SHIFT + ENTER)" allowOpen={isFocused}>
+      <Tooltip text="(SHIFT + ENTER)" disabled={!isFocused}>
         <button
           onClick={() => createColumn({ ...emptyCreateVarcharColumn(), tableId: id })}
           onKeyDown={(e) => {

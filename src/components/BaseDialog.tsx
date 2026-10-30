@@ -1,16 +1,13 @@
-import { ReactNode } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
+import { ReactElement, ReactNode } from 'react';
+import { Dialog } from '@base-ui/react/dialog';
 import { Modal } from './Modal';
 import { IconButton } from './IconButton';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-type BaseDialogProps = Pick<Dialog.DialogProps, 'open'> & {
+type BaseDialogProps = Pick<Dialog.Root.Props, 'open' | 'onOpenChange'> & {
   title: string;
   children: ReactNode;
-  trigger?: ReactNode;
-  noCloseButton?: boolean;
-  onClose?: () => void;
-  onOpenChange?: (isOpen: boolean) => void;
+  trigger?: ReactElement;
   closeOnInteractOutside?: boolean;
 };
 
@@ -18,51 +15,22 @@ export function BaseDialog({
   title,
   children,
   trigger,
-  noCloseButton,
-  onClose,
-  onOpenChange,
-  closeOnInteractOutside,
+  closeOnInteractOutside = false,
   ...rootProps
 }: BaseDialogProps) {
   return (
-    <Dialog.Root
-      {...rootProps}
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          onClose?.();
-        }
-
-        onOpenChange?.(isOpen);
-      }}
-    >
-      {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
+    <Dialog.Root {...rootProps} disablePointerDismissal={!closeOnInteractOutside}>
+      {trigger && <Dialog.Trigger render={trigger} />}
       <Dialog.Portal>
-        <Dialog.Overlay asChild>
-          <Modal.Overlay>
-            <Dialog.Content
-              onInteractOutside={(e) => {
-                if (!closeOnInteractOutside) {
-                  e.preventDefault();
-                }
-              }}
-              asChild
-            >
-              <Modal.Content>
-                <div className="flex items-center justify-between">
-                  <Dialog.Title asChild>
-                    <Modal.Title>{title}</Modal.Title>
-                  </Dialog.Title>
-                  {!noCloseButton && (
-                    <Dialog.Close asChild>
-                      <IconButton icon={XMarkIcon} label="Close" />
-                    </Dialog.Close>
-                  )}
-                </div>
-                {children}
-              </Modal.Content>
-            </Dialog.Content>
-          </Modal.Overlay>
-        </Dialog.Overlay>
+        <Dialog.Viewport render={<Modal.Overlay />}>
+          <Dialog.Popup render={<Modal.Content />}>
+            <div className="flex items-center justify-between">
+              <Dialog.Title render={<Modal.Title />}>{title}</Dialog.Title>
+              <Dialog.Close render={<IconButton icon={XMarkIcon} label="Close" />} />
+            </div>
+            {children}
+          </Dialog.Popup>
+        </Dialog.Viewport>
       </Dialog.Portal>
     </Dialog.Root>
   );

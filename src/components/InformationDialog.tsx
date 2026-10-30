@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 import { BaseDialog } from './BaseDialog';
 import { DescListItem } from './DescListItem';
 
 type InformationDialogProps = {
-  trigger: ReactNode;
+  trigger: ReactElement;
 };
 
 export function InformationDialog({ trigger }: InformationDialogProps) {

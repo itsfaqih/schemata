@@ -1,34 +1,30 @@
 import { clsx } from '@/utils/clsx';
-import * as RadixTooltip from '@radix-ui/react-tooltip';
-import { ReactNode } from 'react';
+import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
+import { ReactElement } from 'react';
 
 type TooltipProps = {
   text: string;
-  children: ReactNode;
-  allowOpen?: boolean;
+  children: ReactElement;
+  disabled?: boolean;
 };
 
-export function Tooltip({ text, children, allowOpen }: TooltipProps) {
-  // allowOpen={false} forces the tooltip closed; otherwise Radix controls it
-  const rootProps: Pick<RadixTooltip.TooltipProps, 'open'> = {};
-
-  if (allowOpen === false) rootProps.open = false;
-
+export function Tooltip({ text, children, disabled = false }: TooltipProps) {
   return (
-    <RadixTooltip.Provider>
-      <RadixTooltip.Root delayDuration={0} disableHoverableContent {...rootProps}>
-        <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
-        <RadixTooltip.Portal>
-          <RadixTooltip.Content
+    <BaseTooltip.Root disabled={disabled} disableHoverablePopup>
+      <BaseTooltip.Trigger delay={0} render={children} />
+      <BaseTooltip.Portal>
+        <BaseTooltip.Positioner collisionPadding={0}>
+          <BaseTooltip.Popup
+            role="tooltip"
             className={clsx(
               'rounded border border-gray-700 bg-gray-900 py-2.5 px-3 text-xs text-white shadow-sm duration-500',
-              'rdx-state-delayed-open:animate-in rdx-state-delayed-open:zoom-in-95',
+              '[&[data-open]:not([data-instant])]:animate-in [&[data-open]:not([data-instant])]:zoom-in-95',
             )}
           >
             {text}
-          </RadixTooltip.Content>
-        </RadixTooltip.Portal>
-      </RadixTooltip.Root>
-    </RadixTooltip.Provider>
+          </BaseTooltip.Popup>
+        </BaseTooltip.Positioner>
+      </BaseTooltip.Portal>
+    </BaseTooltip.Root>
   );
 }
