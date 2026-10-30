@@ -1,0 +1,29 @@
+# Stack
+
+The tools this project uses, chosen with the user during setup. The other docs name the job; this table says which tool does it.
+
+| Job | Tool |
+| --- | --- |
+| Dependency manager | pnpm (version pinned in `packageManager`) |
+| Dev-server ports and URLs | portless |
+| Web frontend | Vite + React + TanStack Router (the project's own) |
+| Interactive UI primitives | Base UI for new components; existing Radix components move over as they are changed |
+| Linter | Oxlint, type-aware through oxlint-tsgolint, with the vendored anti-slop plugin (`tools/oxlint/anti-slop/`) |
+| Formatter | Oxfmt |
+| Type checker | tsrs (Rust port of the TypeScript 7 compiler) |
+| Schema validation at boundaries | Zod |
+| Unit and integration runner | Vitest |
+| Property-based testing | fast-check |
+| Mutation testing | StrykerJS (Vitest runner) |
+| Web e2e runner | Playwright |
+| Browser driver for agents | agent-browser (global CLI, not a project dependency) |
+| PR descriptions and evidence | GitHub CLI (`gh` 2.101 or later) |
+
+Not used, because the project has nothing they apply to: dependency containers, third-party or cloud emulation, a backend framework, logging and analytics, infrastructure as code, pre-commit hooks.
+
+Rules:
+
+- **New parts start on the chosen tool; an existing part moves over as it is changed.** Where a part cannot move piecemeal (a web framework's routes, a backend's HTTP layer), it keeps its framework and only new projects use the chosen one.
+- **One tool per job.** Adding a second tool for a job already in the table needs the user's approval and a row change.
+- **Agent guides stay installed.** When a tool ships an agent guide or skill, it is installed, committed with its lockfile, and pointed at from the instructions file, so every worktree has it.
+- **Every tool runs offline.** A tool that needs a paid token or a hosted account to run in a worktree is swapped for one that runs offline, and an unmaintained tool for a maintained one.
