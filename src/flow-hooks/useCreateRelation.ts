@@ -1,12 +1,12 @@
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { useEditorState } from '@/contexts/EditorStateContext';
 import { useHandleEdgeMarker } from './useHandleEdgeMarker';
-import { TableWithoutIdType } from '@/schemas/table';
-import { EdgeType, CreateRelationType, RelationEdgeType } from '@/schemas/relation';
+import { TableNodeType } from '@/schemas/table';
+import { CreateRelationType, RelationEdgeType } from '@/schemas/relation';
 
 export function useCreateRelation() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType, EdgeType>();
+  const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
   const handleEdgeMarker = useHandleEdgeMarker();
 
   return (newRelation: CreateRelationType) => {

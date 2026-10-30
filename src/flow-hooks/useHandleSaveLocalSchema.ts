@@ -1,13 +1,13 @@
 import { useSaveLocalSchema } from '@/mutations/useSaveLocalSchema';
 import { PositionType } from '@/schemas/position';
-import { RelationType } from '@/schemas/relation';
+import { RelationEdgeType, RelationType } from '@/schemas/relation';
 import { SchemaType } from '@/schemas/schema';
-import { TableType } from '@/schemas/table';
+import { TableNodeType, TableType } from '@/schemas/table';
 import { nodeToTable, nodeToPosition, edgeToRelation } from '@/utils/reactflow';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 
 export function useHandleSaveLocalSchema(id: SchemaType['id']) {
-  const reactFlowInstance = useReactFlow();
+  const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
   const { mutate: saveLocalSchema } = useSaveLocalSchema(id);
 
   return () => {

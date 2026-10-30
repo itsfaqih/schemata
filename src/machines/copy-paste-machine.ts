@@ -1,5 +1,5 @@
 import { assign, setup } from 'xstate';
-import { ReactFlowInstance } from 'reactflow';
+import { ReactFlowInstance } from '@xyflow/react';
 import { ColumnType } from '@/schemas/column';
 import { TableType } from '@/schemas/table';
 
@@ -33,7 +33,7 @@ export const copyPasteMachine = setup({
     }),
     deleteInstance: ({ event }) => {
       if (event.type === 'CUT' && event.data.type === 'TABLE') {
-        event.reactFlowInstance.deleteElements({ nodes: [{ id: event.data.payload.id }] });
+        void event.reactFlowInstance.deleteElements({ nodes: [{ id: event.data.payload.id }] });
       }
     },
   },

@@ -1,6 +1,6 @@
 import { BaseColumnSchema } from '@/schemas/base';
-import { TableWithoutIdType } from '@/schemas/table';
-import { useReactFlow } from 'reactflow';
+import { TableNodeType } from '@/schemas/table';
+import { useReactFlow } from '@xyflow/react';
 import { z } from 'zod';
 
 export const ValidateUniqueColumnNameSchema = BaseColumnSchema.pick({
@@ -13,7 +13,7 @@ export const ValidateUniqueColumnNameSchema = BaseColumnSchema.pick({
 export type ValidateUniqueColumnNameType = z.infer<typeof ValidateUniqueColumnNameSchema>;
 
 export function useValidateUniqueColumnName() {
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (columnPayload: ValidateUniqueColumnNameType) => {
     const { id, name, tableId } = columnPayload;

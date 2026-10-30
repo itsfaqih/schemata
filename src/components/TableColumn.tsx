@@ -20,7 +20,7 @@ import { useDeleteColumn } from '@/flow-hooks/useDeleteColumn';
 import { useCreateColumn } from '@/flow-hooks/useCreateColumn';
 import { emptyCreateVarcharColumn, getColumnIdFromHandleId } from '@/utils/reactflow';
 import { IndexType } from '@/schemas/base';
-import { useStore } from 'reactflow';
+import { useStore } from '@xyflow/react';
 import { handleFocusLockChildrenBlur } from '@/utils/focus-lock';
 import { Combobox } from './Combobox';
 import { ContextMenu } from './ContextMenu';

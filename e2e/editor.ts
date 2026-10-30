@@ -72,7 +72,7 @@ export async function addColumn(table: Locator, name: string): Promise<Locator> 
 // The relation menu button has no accessible name and stays hidden until the pointer is over the
 // relation line, so the line is hovered at its midpoint, where the button then shows.
 export async function relationMenu(page: Page): Promise<void> {
-  const relation = page.getByRole('button', { name: /^Edge from/ });
+  const relation = page.getByRole('group', { name: /^Edge from/ });
 
   await relation.hover();
   await relation.getByRole('button').click();
@@ -80,7 +80,7 @@ export async function relationMenu(page: Page): Promise<void> {
 
 // The relation line is the focusable path inside the relation; it has no accessible name of its own.
 export function relationLine(page: Page): Locator {
-  return page.getByRole('button', { name: /^Edge from/ }).locator('path[tabindex="0"]');
+  return page.getByRole('group', { name: /^Edge from/ }).locator('path[tabindex="0"]');
 }
 
 // The line's midpoint holds the menu button, so the line is clicked a short way along its path

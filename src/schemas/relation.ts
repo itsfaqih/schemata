@@ -1,4 +1,4 @@
-import { Edge } from 'reactflow';
+import { Edge } from '@xyflow/react';
 import { z } from 'zod';
 import { ColumnType } from './column';
 

@@ -1,6 +1,6 @@
-import { DragEventHandler, useCallback, useRef, useEffect, MouseEvent, useState } from 'react';
-import ReactFlow, { Background, EdgeTypes, NodeTypes, Panel, useReactFlow } from 'reactflow';
-import 'reactflow/dist/style.css';
+import { DragEventHandler, useCallback, useEffect, MouseEvent, useState } from 'react';
+import { ReactFlow, Background, EdgeTypes, NodeTypes, Panel, useReactFlow } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import { TableNode } from './TableNode';
 import { GeneralPropsPanel } from './GeneralPropsPanel';
 import { EditorPropsPanel } from './EditorPropsPanel';
@@ -18,9 +18,9 @@ import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { UtilsPanel } from './UtilsPanel';
 import { AddTableIcon } from './Icon/AddTableIcon';
 import { ClipboardIcon } from '@heroicons/react/20/solid';
-import { TableWithoutIdType } from '@/schemas/table';
+import { TableNodeType } from '@/schemas/table';
 import { SchemaType } from '@/schemas/schema';
-import { EdgeType } from '@/schemas/relation';
+import { RelationEdgeType } from '@/schemas/relation';
 
 const nodeTypes: NodeTypes = { table: TableNode };
 
@@ -33,8 +33,7 @@ type CanvasProps = {
 };
 
 export function Canvas({ schema }: CanvasProps) {
-  const reactFlowInstance = useReactFlow<TableWithoutIdType, EdgeType>();
-  const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
+  const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
 
   const { copyPasteService, defaults, undoableService } = useEditorState();
 
@@ -43,9 +42,7 @@ export function Canvas({ schema }: CanvasProps) {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const onDrop: DragEventHandler<HTMLDivElement> = useHandleCreateTableOnDrop({
-    reactFlowWrapper,
-  });
+  const onDrop: DragEventHandler<HTMLDivElement> = useHandleCreateTableOnDrop();
 
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
@@ -59,7 +56,7 @@ export function Canvas({ schema }: CanvasProps) {
       context: { clipboard },
     } = copyPasteService.getSnapshot();
 
-    const finalPosition = reactFlowInstance.project(position);
+    const finalPosition = reactFlowInstance.screenToFlowPosition(position);
 
     if (clipboard.status === 'COPIED' && clipboard.type === 'TABLE') {
       const { id: _id, ...payloadWithoutId } = clipboard.payload;
@@ -114,7 +111,7 @@ export function Canvas({ schema }: CanvasProps) {
   });
 
   const triggerCreateTable = (e: MouseEvent) => {
-    const position = reactFlowInstance.project({
+    const position = reactFlowInstance.screenToFlowPosition({
       x: e.clientX,
       y: e.clientY,
     });
@@ -144,7 +141,7 @@ export function Canvas({ schema }: CanvasProps) {
         },
       ]}
     >
-      <div ref={reactFlowWrapper} className="h-screen w-full">
+      <div className="h-screen w-full">
         <ReactFlow
           id="canvas"
           defaultNodes={defaults.nodes}
@@ -153,6 +150,7 @@ export function Canvas({ schema }: CanvasProps) {
           edgeTypes={edgeTypes}
           onDragOver={onDragOver}
           onDrop={onDrop}
+          elevateEdgesOnSelect
           defaultEdgeOptions={{ type: 'floating' }}
           onNodesDelete={() => undoableService.updateData(true)}
           onEdgesDelete={() => undoableService.updateData(true)}
@@ -219,7 +217,9 @@ export function Canvas({ schema }: CanvasProps) {
           <Panel position="bottom-left">
             <UtilsPanel />
           </Panel>
-          <Background className="bg-white" color="black" />
+          {/* React Flow 12 centres each dot in its 20px cell; -9.5 (half the gap less half the
+              dot) puts the dots back on the cell corners where version 11 drew them */}
+          <Background className="bg-white" color="black" offset={-9.5} />
         </ReactFlow>
       </div>
     </ContextMenu>

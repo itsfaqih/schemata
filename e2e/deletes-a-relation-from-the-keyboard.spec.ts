@@ -11,7 +11,7 @@ import { expect, test } from './fixtures';
 
 test('deletes a relation from the keyboard', async ({ page, step }) => {
   const dialog = page.getByRole('dialog', { name: 'Add Relation' });
-  const relation = page.getByRole('button', { name: /^Edge from/ });
+  const relation = page.getByRole('group', { name: /^Edge from/ });
   const userOrganizationId = columnNamed(page.getByTestId('table-node').last(), 'organization_id');
 
   await step('open the editor with organizations.id related to users.organization_id', async () => {

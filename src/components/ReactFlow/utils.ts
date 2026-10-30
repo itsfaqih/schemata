@@ -1,9 +1,9 @@
-import { Position, internalsSymbol, Node, Edge } from 'reactflow';
+import { Position, InternalNode, Edge } from '@xyflow/react';
 
 // returns the position (top,right,bottom or right) passed node compared to
 function getParams(
-  sourceNode: Node,
-  targetNode: Node,
+  sourceNode: InternalNode,
+  targetNode: InternalNode,
   relatedEdge: Edge,
 ): [number, number, Position] {
   const centerA = getNodeCenter(sourceNode);
@@ -18,7 +18,7 @@ function getParams(
 }
 
 function getHandleCoordsByPosition(
-  sourceNode: Node,
+  sourceNode: InternalNode,
   handlePosition: Position,
   relatedEdge: Edge,
 ): [number, number] {
@@ -26,7 +26,7 @@ function getHandleCoordsByPosition(
   const targetHandleId = relatedEdge.targetHandle?.split('-').slice(0, -1).join('-');
 
   // all handles are from type source, that's why we use handleBounds.source here
-  const handle = sourceNode?.[internalsSymbol]?.handleBounds?.source?.find((h) => {
+  const handle = sourceNode.internals.handleBounds?.source?.find((h) => {
     const hId = h.id?.split('-').slice(0, -2).join('-');
 
     return h.position === handlePosition && (hId === sourceHandleId || hId === targetHandleId);
@@ -53,21 +53,25 @@ function getHandleCoordsByPosition(
       break;
   }
 
-  const x = (sourceNode?.positionAbsolute?.x ?? 0) + (handle?.x ?? 0) + offsetX;
-  const y = (sourceNode?.positionAbsolute?.y ?? 0) + (handle?.y ?? 0) + offsetY;
+  const x = sourceNode.internals.positionAbsolute.x + (handle?.x ?? 0) + offsetX;
+  const y = sourceNode.internals.positionAbsolute.y + (handle?.y ?? 0) + offsetY;
 
   return [x, y];
 }
 
-function getNodeCenter(node: Node) {
+function getNodeCenter(node: InternalNode) {
   return {
-    x: (node?.positionAbsolute?.x ?? 0) + (node?.width ?? 0) / 2,
-    y: (node?.positionAbsolute?.y ?? 0) + (node?.height ?? 0) / 2,
+    x: node.internals.positionAbsolute.x + (node.measured.width ?? 0) / 2,
+    y: node.internals.positionAbsolute.y + (node.measured.height ?? 0) / 2,
   };
 }
 
 // returns the parameters (sx, sy, tx, ty, sourcePos, targetPos) you need to create an edge
-export function getEdgeParams(sourceNode: Node, targetNode: Node, relatedEdge: Edge) {
+export function getEdgeParams(
+  sourceNode: InternalNode,
+  targetNode: InternalNode,
+  relatedEdge: Edge,
+) {
   const [sx, sy, sourcePos] = getParams(sourceNode, targetNode, relatedEdge);
   const [tx, ty, targetPos] = getParams(targetNode, sourceNode, relatedEdge);
 

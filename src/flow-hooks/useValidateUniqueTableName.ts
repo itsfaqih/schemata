@@ -1,5 +1,5 @@
-import { TableSchema, TableWithoutIdType } from '@/schemas/table';
-import { useReactFlow } from 'reactflow';
+import { TableSchema, TableNodeType } from '@/schemas/table';
+import { useReactFlow } from '@xyflow/react';
 import { z } from 'zod';
 
 export const ValidateUniqueTableNameSchema = TableSchema.pick({ id: true, name: true });
@@ -7,7 +7,7 @@ export const ValidateUniqueTableNameSchema = TableSchema.pick({ id: true, name: 
 export type ValidateUniqueTableNameType = z.infer<typeof ValidateUniqueTableNameSchema>;
 
 export function useValidateUniqueTableName() {
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (tablePayload: ValidateUniqueTableNameType) => {
     const { id, name } = tablePayload;

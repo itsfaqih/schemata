@@ -1,12 +1,12 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
 import { DeleteColumnType } from '@/schemas/delete-column';
-import { TableWithoutIdType } from '@/schemas/table';
+import { TableNodeType } from '@/schemas/table';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 
 export function useDeleteColumn() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (columnPayload: DeleteColumnType) => {
     const { tableId, id } = columnPayload;

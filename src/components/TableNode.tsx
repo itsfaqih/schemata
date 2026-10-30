@@ -2,17 +2,17 @@ import { clsx } from '@/utils/clsx';
 import { TableHeader } from './TableHeader';
 import { useCreateColumn } from '@/flow-hooks/useCreateColumn';
 import { emptyCreateVarcharColumn } from '@/utils/reactflow';
-import { TableWithoutIdType } from '@/schemas/table';
+import { TableNodeType } from '@/schemas/table';
 import { Tooltip } from './Tooltip';
 import { useState } from 'react';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import { TableColumnList } from './TableColumnList';
 import { DndContext } from '@dnd-kit/core';
-import { NodeProps } from 'reactflow';
+import { NodeProps } from '@xyflow/react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useReorderColumn } from '@/flow-hooks/useReorderColumn';
 
-export function TableNode({ id, data: table }: NodeProps<TableWithoutIdType>) {
+export function TableNode({ id, data: table }: NodeProps<TableNodeType>) {
   const createColumn = useCreateColumn();
 
   const [isFocused, setIsFocused] = useState(false);

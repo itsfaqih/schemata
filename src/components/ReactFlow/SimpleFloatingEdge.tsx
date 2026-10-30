@@ -1,15 +1,21 @@
 import { useReverseRelation } from '@/flow-hooks/useReverseRelation';
-import { EdgeType } from '@/schemas/relation';
-import { TableWithoutIdType } from '@/schemas/table';
+import { RelationEdgeType } from '@/schemas/relation';
+import { TableNodeType } from '@/schemas/table';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
 import { ArrowsRightLeftIcon, Bars3Icon, TrashIcon } from '@heroicons/react/20/solid';
 import { useCallback } from 'react';
-import { useStore, getSmoothStepPath, useReactFlow, EdgeProps } from 'reactflow';
+import {
+  useStore,
+  getSmoothStepPath,
+  useReactFlow,
+  useInternalNode,
+  EdgeProps,
+} from '@xyflow/react';
 import { DropdownMenu } from '../DropdownMenu';
 import { getEdgeParams } from './utils';
 
 type SimpleFloatingEdgeProps = Pick<
-  EdgeProps<EdgeType>,
+  EdgeProps<RelationEdgeType>,
   'id' | 'source' | 'target' | 'markerStart' | 'markerEnd' | 'style' | 'data'
 >;
 
@@ -24,9 +30,9 @@ export function SimpleFloatingEdge({
   style,
   data,
 }: SimpleFloatingEdgeProps) {
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
-  const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
-  const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
+  const reactFlowInstance = useReactFlow<TableNodeType>();
+  const sourceNode = useInternalNode<TableNodeType>(source);
+  const targetNode = useInternalNode<TableNodeType>(target);
 
   const sourceColumnId = data?.sourceColumnId;
   const targetColumnId = data?.targetColumnId;
@@ -76,7 +82,7 @@ export function SimpleFloatingEdge({
           e.preventDefault();
 
           if (e.key === 'Delete') {
-            reactFlowInstance.deleteElements({ edges: [relatedEdge] });
+            void reactFlowInstance.deleteElements({ edges: [relatedEdge] });
           }
         }}
         d={edgePath}
@@ -120,7 +126,7 @@ export function SimpleFloatingEdge({
               icon: TrashIcon,
               label: 'Delete',
               onClick() {
-                reactFlowInstance.deleteElements({ edges: [relatedEdge] });
+                void reactFlowInstance.deleteElements({ edges: [relatedEdge] });
               },
             },
           ]}

@@ -47,7 +47,7 @@ test('adds, reverses and deletes a relation', async ({ page, step }) => {
   });
 
   await step('see no foreign key left', async () => {
-    await expect(page.getByRole('button', { name: /^Edge from/ })).toHaveCount(0);
+    await expect(page.getByRole('group', { name: /^Edge from/ })).toHaveCount(0);
     await expect(organizationId.getByText('Foreign key')).toHaveCount(0);
     await expect(userOrganizationId.getByText('Foreign key')).toHaveCount(0);
   });

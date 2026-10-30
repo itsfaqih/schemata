@@ -75,6 +75,6 @@ test('opens a shared schema link', async ({ page, step }) => {
     await expect(columnNamed(tableNamed(page, 'users'), 'organization_id')).toContainText(
       'Foreign key',
     );
-    await expect(page.getByRole('button', { name: /^Edge from/ })).toHaveCount(1);
+    await expect(page.getByRole('group', { name: /^Edge from/ })).toHaveCount(1);
   });
 });

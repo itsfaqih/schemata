@@ -1,5 +1,5 @@
 import { clsx } from '@/utils/clsx';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position } from '@xyflow/react';
 import { TableColumn } from './TableColumn';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';

@@ -1,4 +1,4 @@
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 
 export function useDeleteSelectedTable() {
   const reactFlowInstance = useReactFlow();
@@ -7,6 +7,6 @@ export function useDeleteSelectedTable() {
     const nodes = reactFlowInstance.getNodes();
     const selectedNodes = nodes.filter((node) => node.selected);
 
-    reactFlowInstance.deleteElements({ nodes: selectedNodes });
+    void reactFlowInstance.deleteElements({ nodes: selectedNodes });
   };
 }

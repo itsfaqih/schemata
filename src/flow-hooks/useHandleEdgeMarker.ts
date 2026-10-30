@@ -1,11 +1,11 @@
 import { IndexType } from '@/schemas/base';
-import { EdgeType } from '@/schemas/relation';
-import { TableWithoutIdType } from '@/schemas/table';
+import { RelationEdgeType } from '@/schemas/relation';
+import { TableNodeType } from '@/schemas/table';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
-import { Edge, useReactFlow } from 'reactflow';
+import { Edge, useReactFlow } from '@xyflow/react';
 
 export function useHandleEdgeMarker() {
-  const reactFlowInstance = useReactFlow<TableWithoutIdType, EdgeType>();
+  const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
 
   return (edge: Edge, indexes?: IndexType[]) => {
     const sourceColumnId = edge.sourceHandle ? getColumnIdFromHandleId(edge.sourceHandle) : '';

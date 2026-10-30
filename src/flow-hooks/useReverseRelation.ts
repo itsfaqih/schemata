@@ -1,11 +1,11 @@
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { useEditorState } from '@/contexts/EditorStateContext';
-import { TableWithoutIdType } from '@/schemas/table';
-import { EdgeType, RelationType } from '@/schemas/relation';
+import { TableNodeType } from '@/schemas/table';
+import { RelationType, RelationEdgeType } from '@/schemas/relation';
 
 export function useReverseRelation() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType, EdgeType>();
+  const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
 
   return (relationId: RelationType['id']) => {
     reactFlowInstance.setEdges((edges) => {

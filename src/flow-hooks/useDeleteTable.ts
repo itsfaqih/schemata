@@ -1,13 +1,14 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
-import { TableType, TableWithoutIdType } from '@/schemas/table';
-import { useReactFlow } from 'reactflow';
+import { TableType, TableNodeType } from '@/schemas/table';
+import { useReactFlow } from '@xyflow/react';
 
 export function useDeleteTable() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (tableId: TableType['id']) => {
-    reactFlowInstance.deleteElements({ nodes: [{ id: tableId }] });
-    undoableService.updateData();
+    void reactFlowInstance
+      .deleteElements({ nodes: [{ id: tableId }] })
+      .then(() => undoableService.updateData());
   };
 }

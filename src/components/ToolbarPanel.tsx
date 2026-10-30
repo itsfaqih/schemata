@@ -2,7 +2,7 @@ import { DragEvent } from 'react';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { EditorPanelContainer } from './EditorPanelContainer';
 import { Tooltip } from './Tooltip';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { clsx } from '@/utils/clsx';
 import { emptyTableWithoutId } from '@/utils/reactflow';
 import { AddTableIcon } from './Icon/AddTableIcon';
@@ -13,13 +13,13 @@ function onDragStart(event: DragEvent<HTMLButtonElement>, nodeType: 'table') {
 }
 
 export function ToolbarPanel() {
-  const { project } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
   const createTable = useCreateTable();
 
   const handleCreateTable = () => {
     const rect = document.body.getBoundingClientRect();
 
-    const position = project({
+    const position = screenToFlowPosition({
       x: rect.width / 2,
       y: rect.height / 2,
     });

@@ -1,4 +1,4 @@
-import { Node } from 'reactflow';
+import { Node } from '@xyflow/react';
 import { z } from 'zod';
 import { IndexSchema } from './base';
 import { ColumnSchema } from './column';

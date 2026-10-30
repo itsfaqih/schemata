@@ -1,14 +1,14 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
 import { IndexType } from '@/schemas/base';
-import { TableWithoutIdType } from '@/schemas/table';
+import { TableNodeType } from '@/schemas/table';
 import { UpdateColumnType } from '@/schemas/update-column';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
-import { Node, useReactFlow } from 'reactflow';
+import { Node, useReactFlow } from '@xyflow/react';
 import { useHandleEdgeMarker } from './useHandleEdgeMarker';
 
 export function useUpdateColumn() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
   const handleEdgeMarker = useHandleEdgeMarker();
 
   return (columnPayload: UpdateColumnType) => {

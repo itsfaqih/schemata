@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import localforage from 'localforage';
 import { useEffect, useRef } from 'react';
-import { ReactFlowProvider } from 'reactflow';
+import { ReactFlowProvider } from '@xyflow/react';
 
 const starterSchema = emptySchemaFactory();
 

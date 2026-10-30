@@ -1,10 +1,10 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
-import { TableType, TableWithoutIdType } from '@/schemas/table';
-import { useReactFlow } from 'reactflow';
+import { TableType, TableNodeType } from '@/schemas/table';
+import { useReactFlow } from '@xyflow/react';
 
 export function useUpdateTable() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (newTable: TableType) => {
     const { id, name, ...tablePayload } = newTable;

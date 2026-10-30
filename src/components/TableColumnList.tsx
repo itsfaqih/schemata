@@ -1,7 +1,7 @@
 import { TableType } from '@/schemas/table';
 import { useDroppable } from '@dnd-kit/core';
 import { clsx } from 'clsx';
-import { useStore } from 'reactflow';
+import { useConnection } from '@xyflow/react';
 import { TableColumnListItem } from './TableColumnListItem';
 
 type TableColumnListProps = {
@@ -9,7 +9,7 @@ type TableColumnListProps = {
 };
 
 export function TableColumnList({ table }: TableColumnListProps) {
-  const connectionNodeId = useStore((state) => state.connectionNodeId);
+  const connectionNodeId = useConnection((connection) => connection.fromNode?.id ?? null);
 
   const isTarget = !!(connectionNodeId && connectionNodeId !== table.id);
 

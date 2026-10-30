@@ -1,16 +1,26 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useEffectEvent,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useActorRef } from '@xstate/react';
 import { copyPasteMachine } from '@/machines/copy-paste-machine';
 import { ActorRefFrom } from 'xstate';
 import { SchemaType } from '@/schemas/schema';
-import { Edge, useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import useUndoable from 'use-undoable';
 import { useTransformSchemaToReactFlowData } from '@/flow-hooks/useTransformSchemaToReactFlowData';
 import { CreateRelationDialogProps } from '@/components/CreateRelationDialog';
 import { useHandleSaveLocalSchema } from '@/flow-hooks/useHandleSaveLocalSchema';
 import { TableNodeType } from '@/schemas/table';
+import { RelationEdgeType } from '@/schemas/relation';
 
-type ReactFlowDataType = { nodes: TableNodeType[]; edges: Edge[] };
+type ReactFlowDataType = { nodes: TableNodeType[]; edges: RelationEdgeType[] };
 
 type EditorState = {
   copyPasteService: ActorRefFrom<typeof copyPasteMachine>;
@@ -61,10 +71,24 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
     edges: defaults.edges,
   });
 
-  const reactFlowInstance = useReactFlow();
+  const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
   const handleSaveSchema = useHandleSaveLocalSchema(schema.id);
 
-  const updateData = (forcePass?: boolean) => {
+  // React Flow applies setNodes, setEdges and deleteElements in a layout effect before its next
+  // render, so the canvas is read in a passive effect once that render committed
+  const forcePassRequested = useRef(false);
+  const [updateRequests, requestUpdate] = useReducer((count: number) => count + 1, 0);
+
+  const updateData = (forcePass = false) => {
+    forcePassRequested.current ||= forcePass;
+    requestUpdate();
+  };
+
+  const recordCanvas = useEffectEvent(() => {
+    const forcePass = forcePassRequested.current;
+
+    forcePassRequested.current = false;
+
     const nodes = reactFlowInstance.getNodes();
     const edges = reactFlowInstance.getEdges();
 
@@ -91,7 +115,13 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
     });
 
     handleSaveSchema();
-  };
+  });
+
+  useEffect(() => {
+    if (updateRequests > 0) {
+      recordCanvas();
+    }
+  }, [updateRequests]);
 
   const handleUndo = () => {
     undo();

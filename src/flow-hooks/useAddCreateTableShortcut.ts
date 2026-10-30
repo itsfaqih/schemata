@@ -1,6 +1,6 @@
 import { emptyTableWithoutId } from '@/utils/reactflow';
 import { useEffect } from 'react';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { useCreateTable } from './useCreateTable';
 
 export function useAddCreateTableShortcut(position: { x: number; y: number }) {
@@ -35,7 +35,7 @@ export function useAddCreateTableShortcut(position: { x: number; y: number }) {
           finalPosition = { x: rect.width / 2, y: rect.height / 2 };
         }
 
-        createTable(emptyTableWithoutId(), reactFlowInstance.project(finalPosition));
+        createTable(emptyTableWithoutId(), reactFlowInstance.screenToFlowPosition(finalPosition));
       }
     };
 

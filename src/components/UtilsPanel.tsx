@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { EditorPanelContainer } from './EditorPanelContainer';
 import { IconButton } from './IconButton';
 import { Separator } from './Separator';
-import { useReactFlow, useStoreApi } from 'reactflow';
+import { useReactFlow, useStoreApi } from '@xyflow/react';
 
 export function UtilsPanel() {
   const reactFlowStoreApi = useStoreApi();
@@ -18,11 +18,11 @@ export function UtilsPanel() {
   );
 
   const zoomOut = () => {
-    reactFlowInstance.zoomOut();
+    void reactFlowInstance.zoomOut();
   };
 
   const zoomIn = () => {
-    reactFlowInstance.zoomIn();
+    void reactFlowInstance.zoomIn();
   };
 
   reactFlowStoreApi.subscribe(() => {

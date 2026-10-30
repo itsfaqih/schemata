@@ -1,6 +1,6 @@
 import { toPng } from 'html-to-image';
 import { toast } from 'react-hot-toast';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { useRouter } from '@tanstack/react-router';
 import { EditorPanelContainer } from './EditorPanelContainer';
@@ -29,8 +29,8 @@ function downloadImage(dataUrl: string) {
 export function EditorPropsPanel({ schema }: EditorPropsPanelProps) {
   const reactFlowInstance = useReactFlow();
 
-  const exportToImage = () => {
-    reactFlowInstance.fitView();
+  const exportToImage = async () => {
+    await reactFlowInstance.fitView();
 
     const canvas = document.querySelector('.react-flow');
 
@@ -64,7 +64,7 @@ export function EditorPropsPanel({ schema }: EditorPropsPanelProps) {
       <IconButton
         label="Download as image"
         icon={ArrowDownTrayIcon}
-        onClick={exportToImage}
+        onClick={() => void exportToImage()}
         filled
       />
       <Separator orientation="vertical" />

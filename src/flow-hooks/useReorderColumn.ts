@@ -1,8 +1,8 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ColumnType } from '@/schemas/column';
-import { TableType, TableWithoutIdType } from '@/schemas/table';
+import { TableType, TableNodeType } from '@/schemas/table';
 
 type ReorderColumnType = {
   movedColumnId: ColumnType['id'];
@@ -12,7 +12,7 @@ type ReorderColumnType = {
 
 export function useReorderColumn() {
   const { undoableService } = useEditorState();
-  const reactFlowInstance = useReactFlow<TableWithoutIdType>();
+  const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (reorderPayload: ReorderColumnType) => {
     const { movedColumnId, hoveredColumnId, tableId } = reorderPayload;

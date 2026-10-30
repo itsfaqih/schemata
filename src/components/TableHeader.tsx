@@ -9,7 +9,7 @@ import { TableSchema, TableType } from '@/schemas/table';
 import { emptyCreateVarcharColumn } from '@/utils/reactflow';
 import { handleFocusLockChildrenBlur } from '@/utils/focus-lock';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from '@xyflow/react';
 import { ContextMenu } from './ContextMenu';
 import { useEditorState } from '@/contexts/EditorStateContext';
 import {
@@ -79,7 +79,7 @@ export function TableHeader({ table }: TableHeaderProps) {
 
     const rect = containerRef.current?.getBoundingClientRect();
 
-    const position = reactFlowInstance.project({
+    const position = reactFlowInstance.screenToFlowPosition({
       x: (rect?.x ?? 0) + (rect?.width ?? 0),
       y: rect?.y ?? 0,
     });
