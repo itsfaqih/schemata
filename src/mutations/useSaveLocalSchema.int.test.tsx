@@ -118,3 +118,31 @@ it('refreshes mounted schema views after saving', async () => {
     expect(result.current.current.data).toEqual({ ...shop, name: 'Store' });
   });
 });
+
+it('leaves views of other schemas alone after saving', async () => {
+  const warehouse = { ...shop, id: '0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', name: 'Warehouse' };
+
+  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
+  await localforage.setItem('schema-0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', warehouse);
+  const queryClient = new QueryClient();
+
+  const { result } = renderWithClient(queryClient, () => ({
+    other: useLocalSchemaQuery('0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10'),
+    save: useSaveLocalSchema('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
+  }));
+
+  await waitFor(() => {
+    expect(result.current.other.data).toEqual(warehouse);
+  });
+  await localforage.setItem('schema-0b6a1d3e-5a8f-4a39-9a52-4f9f2f1c7d10', {
+    ...warehouse,
+    name: 'Depot',
+  });
+
+  await result.current.save.mutateAsync((current) => ({ ...current, name: 'Store' }));
+  await waitFor(() => {
+    expect(queryClient.isFetching()).toBe(0);
+  });
+
+  expect(result.current.other.data).toEqual(warehouse);
+});
