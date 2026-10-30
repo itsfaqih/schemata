@@ -67,17 +67,17 @@ const schemaArbitrary = fc.record({
     fc.record({
       id: fc.uuid({ version: 4 }),
       name: trimmedName,
-      columns: fc.constant([]),
-      indexes: fc.constant([]),
+      columns: fc.constant<never[]>([]),
+      indexes: fc.constant<never[]>([]),
     }),
     { maxLength: 5 },
   ),
-  groups: fc.constant([]),
+  groups: fc.constant<never[]>([]),
   positions: fc.array(
     fc.record({ itemId: fc.uuid({ version: 4 }), x: fc.integer(), y: fc.integer() }),
     { maxLength: 5 },
   ),
-  relations: fc.constant([]),
+  relations: fc.constant<never[]>([]),
 });
 
 it('decodes every encoded schema back to itself', () => {

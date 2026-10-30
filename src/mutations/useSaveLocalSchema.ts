@@ -1,4 +1,4 @@
-import { localSchemaQuery } from '@/queries/useSchemaQuery';
+import { localSchemaQuery, readStoredSchema } from '@/queries/useSchemaQuery';
 import { SchemaType } from '@/schemas/schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import localforage from 'localforage';
@@ -8,16 +8,12 @@ export function useSaveLocalSchema(id: SchemaType['id']) {
 
   return useMutation<SchemaType, unknown, (currentSchema: SchemaType) => SchemaType>(
     async (updateSchema) => {
-      let currentSchema = await localforage.getItem<SchemaType>(`schema-${id}`);
+      const currentSchema =
+        (await readStoredSchema(`schema-${id}`)) ??
+        queryClient.getQueryData<SchemaType>(['schema', id]);
 
       if (!currentSchema) {
-        const queryDataSchema = queryClient.getQueryData<SchemaType>(['schema', id]);
-
-        if (!queryDataSchema) {
-          throw Error('Schema not found');
-        }
-
-        currentSchema = queryDataSchema;
+        throw Error('Schema not found');
       }
 
       const newSchema = updateSchema(currentSchema);

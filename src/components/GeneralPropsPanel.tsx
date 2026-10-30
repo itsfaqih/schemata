@@ -1,6 +1,6 @@
 import { Check } from 'phosphor-react';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconButton } from './IconButton';
@@ -14,6 +14,10 @@ type GeneralPropsPanelProps = {
   schema: SchemaType;
 };
 
+const RenameSchema = SchemaSchema.pick({ name: true });
+
+type RenameType = Pick<SchemaType, 'name'>;
+
 export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const { mutateAsync: saveDatabaseLocal } = useSaveLocalSchema(schema.id);
@@ -23,13 +27,13 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
     handleSubmit,
     formState: { isSubmitting },
     reset,
-  } = useForm<SchemaType>({
-    resolver: zodResolver(SchemaSchema),
-    defaultValues: schema,
+  } = useForm<RenameType>({
+    resolver: zodResolver(RenameSchema),
+    defaultValues: { name: schema.name },
   });
 
-  const onSubmit = handleSubmit(async (data) => {
-    await saveDatabaseLocal(() => data);
+  const onSubmit = handleSubmit(async ({ name }) => {
+    await saveDatabaseLocal((currentSchema) => ({ ...currentSchema, name }));
 
     setIsRenaming(false);
   });
@@ -38,15 +42,8 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
     setIsRenaming(true);
   };
 
-  const latestSchemaRef = useRef(schema);
-
   useEffect(() => {
-    latestSchemaRef.current = schema;
-  });
-
-  // Resets only on a rename, to the latest schema with that name
-  useEffect(() => {
-    reset({ ...latestSchemaRef.current, name: schema.name });
+    reset({ name: schema.name });
   }, [reset, schema.name]);
 
   return (

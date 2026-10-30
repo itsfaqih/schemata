@@ -37,22 +37,11 @@ beforeEach(async () => {
   await localforage.clear();
 });
 
-it('stores the new schema over the stored one', async () => {
-  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
-  const { result } = renderSave(new QueryClient());
-
-  await result.current.mutateAsync({ ...shop, name: 'Store', positions: [position] });
-
-  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
-    { ...shop, name: 'Store', positions: [position] },
-  );
-});
-
 it('keeps the stored name when the new schema has a blank name', async () => {
   await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
   const { result } = renderSave(new QueryClient());
 
-  await result.current.mutateAsync({ ...shop, name: '', positions: [position] });
+  await result.current.mutateAsync((current) => ({ ...current, name: '', positions: [position] }));
 
   await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
     { ...shop, name: 'Shop', positions: [position] },
@@ -85,11 +74,26 @@ it('falls back to the cached schema when storage has none', async () => {
 it('rejects when neither storage nor the cache holds the schema', async () => {
   const { result } = renderSave(new QueryClient());
 
-  await expect(result.current.mutateAsync({ ...shop, name: 'Store' })).rejects.toThrow(
+  await expect(result.current.mutateAsync(() => ({ ...shop, name: 'Store' }))).rejects.toThrow(
     'Schema not found',
   );
   await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toBe(
     null,
+  );
+});
+
+it('leaves a stored schema that fails validation untouched', async () => {
+  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', {
+    ...shop,
+    vendor: 'POSTGRES:16',
+  });
+  const { result } = renderSave(new QueryClient());
+
+  await expect(
+    result.current.mutateAsync((current) => ({ ...current, name: 'Store' })),
+  ).rejects.toThrow(/vendor/);
+  await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toEqual(
+    { ...shop, vendor: 'POSTGRES:16' },
   );
 });
 
@@ -107,7 +111,7 @@ it('refreshes mounted schema views after saving', async () => {
     expect(result.current.current.data).toEqual(shop);
   });
 
-  await result.current.save.mutateAsync({ ...shop, name: 'Store' });
+  await result.current.save.mutateAsync((current) => ({ ...current, name: 'Store' }));
 
   await waitFor(() => {
     expect(result.current.byId.data).toEqual({ ...shop, name: 'Store' });

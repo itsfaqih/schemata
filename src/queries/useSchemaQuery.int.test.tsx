@@ -33,6 +33,15 @@ it('rejects an id with no stored schema', async () => {
   );
 });
 
+it('rejects a stored schema that fails validation', async () => {
+  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', {
+    ...shop,
+    vendor: 'POSTGRES:16',
+  });
+
+  await expect(fetchLocalSchema('6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).rejects.toThrow(/vendor/);
+});
+
 it('reads the stored schema when no id is given', async () => {
   await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
   await localforage.setItem('settings', { theme: 'dark' });

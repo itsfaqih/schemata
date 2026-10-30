@@ -1,20 +1,20 @@
-import { SchemaType } from '@/schemas/schema';
+import { SchemaSchema, SchemaType } from '@/schemas/schema';
 import { useQuery } from '@tanstack/react-query';
 import localforage from 'localforage';
 import { extendPrototype } from 'localforage-startswith';
 
+// Stryker disable next-line all: equivalent, the package already extends localforage on import
 extendPrototype(localforage);
 
+export async function readStoredSchema(key: string): Promise<SchemaType | null> {
+  const stored: unknown = await localforage.getItem(key);
+
+  return stored === null ? null : SchemaSchema.parse(stored);
+}
+
 export async function fetchLocalSchema(id?: SchemaType['id']): Promise<SchemaType> {
-  let schema: SchemaType | undefined | null;
-
-  if (!id) {
-    const [firstSchemaKey] = await localforage.keysStartingWith('schema');
-
-    schema = firstSchemaKey ? await localforage.getItem<SchemaType>(firstSchemaKey) : null;
-  } else {
-    schema = await localforage.getItem<SchemaType>(`schema-${id}`);
-  }
+  const key = id ? `schema-${id}` : (await localforage.keysStartingWith('schema'))[0];
+  const schema = key ? await readStoredSchema(key) : null;
 
   if (!schema) {
     throw Error('Local schema not found');
