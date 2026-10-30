@@ -32,6 +32,7 @@ export function BaseDialog({
         if (!isOpen) {
           onClose?.();
         }
+
         onOpenChange?.(isOpen);
       }}
     >

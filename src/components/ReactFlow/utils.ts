@@ -19,6 +19,7 @@ function getParams(sourceNode: Node, targetNode: Node, relatedEdge: Edge) {
   // }
 
   const [x, y] = getHandleCoordsByPosition(sourceNode, position, relatedEdge);
+
   return [x, y, position];
 }
 
@@ -29,6 +30,7 @@ function getHandleCoordsByPosition(sourceNode: Node, handlePosition: Position, r
   // all handles are from type source, that's why we use handleBounds.source here
   const handle = sourceNode?.[internalsSymbol]?.handleBounds?.source?.find((h) => {
     const hId = h.id?.split('-').slice(0, -2).join('-');
+
     return h.position === handlePosition && (hId === sourceHandleId || hId === targetHandleId);
   });
 

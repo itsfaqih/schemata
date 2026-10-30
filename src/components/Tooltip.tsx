@@ -9,8 +9,7 @@ type TooltipProps = {
 };
 
 export function Tooltip({ text, children, allowOpen }: TooltipProps) {
-  const isAllowOpen =
-    allowOpen !== undefined ? (allowOpen === true ? undefined : false) : undefined;
+  const isAllowOpen = allowOpen !== undefined ? (allowOpen ? undefined : false) : undefined;
 
   return (
     <RadixTooltip.Provider>

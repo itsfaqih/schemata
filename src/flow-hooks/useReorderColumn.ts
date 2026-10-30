@@ -27,6 +27,7 @@ export function useReorderColumn() {
         const movedColumnIndex = node.data.columns.findIndex(
           (column) => column.id === movedColumnId,
         );
+
         const hoveredColumnIndex = node.data.columns.findIndex(
           (column) => column.id === hoveredColumnId,
         );

@@ -17,6 +17,7 @@ type GeneralPropsPanelProps = {
 export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const { mutateAsync: saveDatabaseLocal } = useSaveLocalSchema(schema.id);
+
   const {
     register,
     handleSubmit,

@@ -9,7 +9,9 @@ export const IndexSchema = z.object({
 export type IndexType = z.infer<typeof IndexSchema>;
 
 export const VisibilityAttribute = z.union([z.literal('INVISIBLE'), z.literal('VISIBLE')]);
+
 export const NullabilityAttribute = z.union([z.literal('NULLABLE'), z.literal('NOT_NULL')]);
+
 export const SignabilityAttribute = z.union([z.literal('UNSIGNED'), z.literal('SIGNED')]);
 
 export const BaseColumnAttributeEnum = z.union([VisibilityAttribute, NullabilityAttribute]);

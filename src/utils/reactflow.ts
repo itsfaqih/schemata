@@ -90,6 +90,7 @@ export function getHandlePositionFromHandleId(handleId: string): 'right' | 'left
   if (handleId.includes('right')) {
     return 'right';
   }
+
   if (handleId.includes('left')) {
     return 'left';
   }

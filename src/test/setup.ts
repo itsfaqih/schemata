@@ -23,6 +23,7 @@ class DOMMatrixReadOnly {
     this.m22 = scale !== undefined ? +scale : 1;
   }
 }
+
 // @ts-ignore
 global.DOMMatrixReadOnly = DOMMatrixReadOnly;
 
@@ -45,5 +46,3 @@ global.DOMMatrixReadOnly = DOMMatrixReadOnly;
 //   width: 0,
 //   height: 0,
 // });
-
-export {};

@@ -39,6 +39,7 @@ export function useUpdateColumn() {
             if (index.type !== 'PRIMARY_KEY') {
               return index;
             }
+
             return {
               ...index,
               columns: isPrimaryKey
@@ -98,6 +99,7 @@ export function useUpdateColumn() {
                   ...newColumn,
                 };
               }
+
               return column;
             }),
             indexes: newIndexes,

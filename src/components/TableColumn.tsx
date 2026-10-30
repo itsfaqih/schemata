@@ -142,6 +142,7 @@ function TableColumnComponent(
 
   const triggerDelete = () => {
     const parent = containerRef.current?.parentElement;
+
     const nearestColumnSibling =
       parent?.previousElementSibling?.lastElementChild ||
       parent?.nextElementSibling?.lastElementChild;

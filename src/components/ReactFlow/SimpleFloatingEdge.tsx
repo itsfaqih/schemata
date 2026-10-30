@@ -32,6 +32,7 @@ export function SimpleFloatingEdge({
   const reactFlowInstance = useReactFlow<TableWithoutIdType>();
   const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
   const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
+
   const relatedEdge = useStore(
     useCallback(
       (store) =>

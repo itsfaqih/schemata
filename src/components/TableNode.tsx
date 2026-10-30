@@ -39,6 +39,7 @@ export function TableNode({ id, data: table }: TableNodeType) {
         onDragStart={({ active }) => setActiveId(active.id)}
         onDragEnd={({ active, over }) => {
           setActiveId(null);
+
           if (over && active.id !== over.id) {
             reorderColumn({
               movedColumnId: active.id as string,
@@ -62,6 +63,7 @@ export function TableNode({ id, data: table }: TableNodeType) {
               e.stopPropagation();
               document.getElementById(`table-header-${id}`)?.focus();
             }
+
             if (e.key.includes('Arrow')) {
               e.stopPropagation();
             }
