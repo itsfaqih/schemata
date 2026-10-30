@@ -1,29 +1,31 @@
-import { ElementType, ReactNode } from 'react';
-import * as RadixDropdownMenu from '@radix-ui/react-dropdown-menu';
+import { Menu as BaseMenu } from '@base-ui/react/menu';
+import { ElementType, ReactElement, ReactNode } from 'react';
 import { Menu } from './Menu';
 
 type DropdownMenuProps = {
-  trigger: ReactNode;
+  trigger: ReactElement;
   items: { label: ReactNode; icon?: ElementType; kbd?: string; onClick?: () => void }[];
 };
 
 export function DropdownMenu({ trigger, items }: DropdownMenuProps) {
   return (
-    <RadixDropdownMenu.Root>
-      <RadixDropdownMenu.Trigger asChild>{trigger}</RadixDropdownMenu.Trigger>
-      <RadixDropdownMenu.Portal>
-        <RadixDropdownMenu.Content asChild>
-          <Menu.Content>
+    <BaseMenu.Root>
+      <BaseMenu.Trigger render={trigger} />
+      <BaseMenu.Portal>
+        <BaseMenu.Positioner collisionPadding={0}>
+          <BaseMenu.Popup render={<Menu.Content />}>
             {items.map((item, index) => (
-              <RadixDropdownMenu.Item key={index} asChild>
-                <Menu.Item icon={item.icon} kbd={item.kbd} onClick={item.onClick}>
-                  {item.label}
-                </Menu.Item>
-              </RadixDropdownMenu.Item>
+              <BaseMenu.Item
+                key={index}
+                onClick={item.onClick}
+                render={<Menu.Item icon={item.icon} kbd={item.kbd} />}
+              >
+                {item.label}
+              </BaseMenu.Item>
             ))}
-          </Menu.Content>
-        </RadixDropdownMenu.Content>
-      </RadixDropdownMenu.Portal>
-    </RadixDropdownMenu.Root>
+          </BaseMenu.Popup>
+        </BaseMenu.Positioner>
+      </BaseMenu.Portal>
+    </BaseMenu.Root>
   );
 }

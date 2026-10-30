@@ -7,9 +7,14 @@ test('copies and pastes a table', async ({ page, step }) => {
     await addTableAt(page, 'foo', { x: 100, y: 100 });
   });
 
-  await step('choose Paste in the canvas menu while nothing is copied', async () => {
+  await step('click the disabled Paste in the canvas menu while nothing is copied', async () => {
     await canvas(page).click({ button: 'right', position: { x: 600, y: 100 } });
-    await menuItem(page, 'Paste').click();
+    await expect(menuItem(page, 'Paste')).toBeDisabled();
+    // click() waits for an enabled item, so the pointer clicks the disabled one by hand.
+    await menuItem(page, 'Paste').hover();
+    await page.mouse.down();
+    await page.mouse.up();
+    await page.keyboard.press('Escape');
 
     await expect(tableHeaders(page)).toHaveText(['foo']);
   });
@@ -18,6 +23,7 @@ test('copies and pastes a table', async ({ page, step }) => {
     await tableHeaders(page).first().click({ button: 'right' });
     await menuItem(page, 'Copy').click();
     await canvas(page).click({ button: 'right', position: { x: 600, y: 100 } });
+    await expect(menuItem(page, 'Paste')).toBeEnabled();
     await menuItem(page, 'Paste').click();
 
     await expect(tableHeaders(page)).toHaveText(['foo', 'foo']);

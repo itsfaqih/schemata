@@ -36,7 +36,7 @@ function MenuItem(
       ref={ref}
       className={clsx(
         'flex w-full cursor-default items-center py-2 px-2.5 text-left backdrop-blur',
-        'hover:bg-gray-100/60',
+        'hover:bg-gray-100/60 data-[disabled]:opacity-50',
         className,
       )}
       {...props}
