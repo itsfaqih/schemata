@@ -47,7 +47,7 @@ export function TableHeader({ table }: TableHeaderProps) {
   } = useForm<TableType>({
     resolver: zodResolver(
       TableSchema.refine(({ id, name }) => validateUniqueTableName({ id, name }), {
-        message: 'Table name is already used',
+        error: 'Table name is already used',
         path: ['name'],
       }),
     ),

@@ -5,7 +5,7 @@ import { RelationSchema } from './relation';
 import { TableSchema } from './table';
 
 export const SchemaSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().trim().max(64),
   vendor: z.enum(['MYSQL:8.0']),
   tables: TableSchema.array(),

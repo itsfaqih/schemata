@@ -13,12 +13,12 @@ export const BaseMediumBlobColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const MediumBlobColumnSchema = BaseColumnSchema.merge(BaseMediumBlobColumnSchema);
+export const MediumBlobColumnSchema = BaseColumnSchema.extend(BaseMediumBlobColumnSchema.shape);
 
-export const CreateMediumBlobColumnSchema = BaseCreateColumnSchema.merge(
-  BaseMediumBlobColumnSchema,
+export const CreateMediumBlobColumnSchema = BaseCreateColumnSchema.extend(
+  BaseMediumBlobColumnSchema.shape,
 );
 
-export const UpdateMediumBlobColumnSchema = BaseUpdateColumnSchema.merge(
-  BaseMediumBlobColumnSchema,
+export const UpdateMediumBlobColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseMediumBlobColumnSchema.shape,
 );

@@ -12,12 +12,14 @@ export const BaseMultiLineStringColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const MultiLineStringColumnSchema = BaseColumnSchema.merge(BaseMultiLineStringColumnSchema);
-
-export const CreateMultiLineStringColumnSchema = BaseCreateColumnSchema.merge(
-  BaseMultiLineStringColumnSchema,
+export const MultiLineStringColumnSchema = BaseColumnSchema.extend(
+  BaseMultiLineStringColumnSchema.shape,
 );
 
-export const UpdateMultiLineStringColumnSchema = BaseUpdateColumnSchema.merge(
-  BaseMultiLineStringColumnSchema,
+export const CreateMultiLineStringColumnSchema = BaseCreateColumnSchema.extend(
+  BaseMultiLineStringColumnSchema.shape,
+);
+
+export const UpdateMultiLineStringColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseMultiLineStringColumnSchema.shape,
 );

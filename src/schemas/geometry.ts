@@ -12,8 +12,12 @@ export const BaseGeometryColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const GeometryColumnSchema = BaseColumnSchema.merge(BaseGeometryColumnSchema);
+export const GeometryColumnSchema = BaseColumnSchema.extend(BaseGeometryColumnSchema.shape);
 
-export const CreateGeometryColumnSchema = BaseCreateColumnSchema.merge(BaseGeometryColumnSchema);
+export const CreateGeometryColumnSchema = BaseCreateColumnSchema.extend(
+  BaseGeometryColumnSchema.shape,
+);
 
-export const UpdateGeometryColumnSchema = BaseUpdateColumnSchema.merge(BaseGeometryColumnSchema);
+export const UpdateGeometryColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseGeometryColumnSchema.shape,
+);

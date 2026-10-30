@@ -4,7 +4,7 @@ import { IndexSchema } from './base';
 import { ColumnSchema } from './column';
 
 export const TableSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().trim().max(64),
   columns: ColumnSchema.array(),
   indexes: IndexSchema.array(),
@@ -16,7 +16,7 @@ export const TableWithoutIdSchema = TableSchema.omit({ id: true });
 
 export type TableWithoutIdType = z.infer<typeof TableWithoutIdSchema>;
 
-export const TableWithOptionalIdSchema = TableSchema.extend({ id: z.string().uuid().optional() });
+export const TableWithOptionalIdSchema = TableSchema.extend({ id: z.uuid().optional() });
 
 export type TableWithOptionalIdType = z.infer<typeof TableWithOptionalIdSchema>;
 

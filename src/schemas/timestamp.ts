@@ -12,8 +12,12 @@ export const BaseTimestampColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const TimestampColumnSchema = BaseColumnSchema.merge(BaseTimestampColumnSchema);
+export const TimestampColumnSchema = BaseColumnSchema.extend(BaseTimestampColumnSchema.shape);
 
-export const CreateTimestampColumnSchema = BaseCreateColumnSchema.merge(BaseTimestampColumnSchema);
+export const CreateTimestampColumnSchema = BaseCreateColumnSchema.extend(
+  BaseTimestampColumnSchema.shape,
+);
 
-export const UpdateTimestampColumnSchema = BaseUpdateColumnSchema.merge(BaseTimestampColumnSchema);
+export const UpdateTimestampColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseTimestampColumnSchema.shape,
+);

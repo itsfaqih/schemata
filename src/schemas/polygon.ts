@@ -12,8 +12,12 @@ export const BasePolygonColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const PolygonColumnSchema = BaseColumnSchema.merge(BasePolygonColumnSchema);
+export const PolygonColumnSchema = BaseColumnSchema.extend(BasePolygonColumnSchema.shape);
 
-export const CreatePolygonColumnSchema = BaseCreateColumnSchema.merge(BasePolygonColumnSchema);
+export const CreatePolygonColumnSchema = BaseCreateColumnSchema.extend(
+  BasePolygonColumnSchema.shape,
+);
 
-export const UpdatePolygonColumnSchema = BaseUpdateColumnSchema.merge(BasePolygonColumnSchema);
+export const UpdatePolygonColumnSchema = BaseUpdateColumnSchema.extend(
+  BasePolygonColumnSchema.shape,
+);

@@ -12,8 +12,12 @@ export const BaseDecimalColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const DecimalColumnSchema = BaseColumnSchema.merge(BaseDecimalColumnSchema);
+export const DecimalColumnSchema = BaseColumnSchema.extend(BaseDecimalColumnSchema.shape);
 
-export const CreateDecimalColumnSchema = BaseCreateColumnSchema.merge(BaseDecimalColumnSchema);
+export const CreateDecimalColumnSchema = BaseCreateColumnSchema.extend(
+  BaseDecimalColumnSchema.shape,
+);
 
-export const UpdateDecimalColumnSchema = BaseUpdateColumnSchema.merge(BaseDecimalColumnSchema);
+export const UpdateDecimalColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseDecimalColumnSchema.shape,
+);

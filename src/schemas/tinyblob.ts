@@ -13,8 +13,12 @@ export const BaseTinyBlobColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const TinyBlobColumnSchema = BaseColumnSchema.merge(BaseTinyBlobColumnSchema);
+export const TinyBlobColumnSchema = BaseColumnSchema.extend(BaseTinyBlobColumnSchema.shape);
 
-export const CreateTinyBlobColumnSchema = BaseCreateColumnSchema.merge(BaseTinyBlobColumnSchema);
+export const CreateTinyBlobColumnSchema = BaseCreateColumnSchema.extend(
+  BaseTinyBlobColumnSchema.shape,
+);
 
-export const UpdateTinyBlobColumnSchema = BaseUpdateColumnSchema.merge(BaseTinyBlobColumnSchema);
+export const UpdateTinyBlobColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseTinyBlobColumnSchema.shape,
+);

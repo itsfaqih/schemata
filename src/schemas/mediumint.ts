@@ -13,8 +13,12 @@ export const BaseMediumIntColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const MediumIntColumnSchema = BaseColumnSchema.merge(BaseMediumIntColumnSchema);
+export const MediumIntColumnSchema = BaseColumnSchema.extend(BaseMediumIntColumnSchema.shape);
 
-export const CreateMediumIntColumnSchema = BaseCreateColumnSchema.merge(BaseMediumIntColumnSchema);
+export const CreateMediumIntColumnSchema = BaseCreateColumnSchema.extend(
+  BaseMediumIntColumnSchema.shape,
+);
 
-export const UpdateMediumIntColumnSchema = BaseUpdateColumnSchema.merge(BaseMediumIntColumnSchema);
+export const UpdateMediumIntColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseMediumIntColumnSchema.shape,
+);

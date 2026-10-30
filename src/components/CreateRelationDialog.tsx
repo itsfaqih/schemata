@@ -92,7 +92,7 @@ export function CreateRelationDialog() {
                     <Textbox
                       label="Table"
                       name="source-table-name"
-                      value={sourceTable?.name}
+                      value={sourceTable?.name ?? ''}
                       readOnly
                       disabled={isSubmitting}
                       data-test="relation-source-table-name"
@@ -100,7 +100,7 @@ export function CreateRelationDialog() {
                     <Textbox
                       label="Column"
                       name="source-column-name"
-                      value={sourceColumn?.name}
+                      value={sourceColumn?.name ?? ''}
                       readOnly
                       disabled={isSubmitting}
                       data-test="relation-source-column-name"

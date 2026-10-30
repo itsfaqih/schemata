@@ -12,8 +12,12 @@ export const BaseDateTimeColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const DateTimeColumnSchema = BaseColumnSchema.merge(BaseDateTimeColumnSchema);
+export const DateTimeColumnSchema = BaseColumnSchema.extend(BaseDateTimeColumnSchema.shape);
 
-export const CreateDateTimeColumnSchema = BaseCreateColumnSchema.merge(BaseDateTimeColumnSchema);
+export const CreateDateTimeColumnSchema = BaseCreateColumnSchema.extend(
+  BaseDateTimeColumnSchema.shape,
+);
 
-export const UpdateDateTimeColumnSchema = BaseUpdateColumnSchema.merge(BaseDateTimeColumnSchema);
+export const UpdateDateTimeColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseDateTimeColumnSchema.shape,
+);

@@ -13,8 +13,8 @@ export const BaseCharColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const CharColumnSchema = BaseColumnSchema.merge(BaseCharColumnSchema);
+export const CharColumnSchema = BaseColumnSchema.extend(BaseCharColumnSchema.shape);
 
-export const CreateCharColumnSchema = BaseCreateColumnSchema.merge(BaseCharColumnSchema);
+export const CreateCharColumnSchema = BaseCreateColumnSchema.extend(BaseCharColumnSchema.shape);
 
-export const UpdateCharColumnSchema = BaseUpdateColumnSchema.merge(BaseCharColumnSchema);
+export const UpdateCharColumnSchema = BaseUpdateColumnSchema.extend(BaseCharColumnSchema.shape);

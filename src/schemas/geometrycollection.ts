@@ -12,14 +12,14 @@ export const BaseGeometryCollectionColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const GeometryCollectionColumnSchema = BaseColumnSchema.merge(
-  BaseGeometryCollectionColumnSchema,
+export const GeometryCollectionColumnSchema = BaseColumnSchema.extend(
+  BaseGeometryCollectionColumnSchema.shape,
 );
 
-export const CreateGeometryCollectionColumnSchema = BaseCreateColumnSchema.merge(
-  BaseGeometryCollectionColumnSchema,
+export const CreateGeometryCollectionColumnSchema = BaseCreateColumnSchema.extend(
+  BaseGeometryCollectionColumnSchema.shape,
 );
 
-export const UpdateGeometryCollectionColumnSchema = BaseUpdateColumnSchema.merge(
-  BaseGeometryCollectionColumnSchema,
+export const UpdateGeometryCollectionColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseGeometryCollectionColumnSchema.shape,
 );

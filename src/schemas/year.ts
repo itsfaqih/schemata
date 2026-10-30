@@ -12,8 +12,8 @@ export const BaseYearColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const YearColumnSchema = BaseColumnSchema.merge(BaseYearColumnSchema);
+export const YearColumnSchema = BaseColumnSchema.extend(BaseYearColumnSchema.shape);
 
-export const CreateYearColumnSchema = BaseCreateColumnSchema.merge(BaseYearColumnSchema);
+export const CreateYearColumnSchema = BaseCreateColumnSchema.extend(BaseYearColumnSchema.shape);
 
-export const UpdateYearColumnSchema = BaseUpdateColumnSchema.merge(BaseYearColumnSchema);
+export const UpdateYearColumnSchema = BaseUpdateColumnSchema.extend(BaseYearColumnSchema.shape);

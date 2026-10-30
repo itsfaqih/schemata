@@ -14,8 +14,12 @@ export const BaseSmallIntColumnSchema = z.object({
   attributes: uniqueArrayElement(z.union([BaseColumnAttributeEnum, SignabilityAttribute]).array()),
 });
 
-export const SmallIntColumnSchema = BaseColumnSchema.merge(BaseSmallIntColumnSchema);
+export const SmallIntColumnSchema = BaseColumnSchema.extend(BaseSmallIntColumnSchema.shape);
 
-export const CreateSmallIntColumnSchema = BaseCreateColumnSchema.merge(BaseSmallIntColumnSchema);
+export const CreateSmallIntColumnSchema = BaseCreateColumnSchema.extend(
+  BaseSmallIntColumnSchema.shape,
+);
 
-export const UpdateSmallIntColumnSchema = BaseUpdateColumnSchema.merge(BaseSmallIntColumnSchema);
+export const UpdateSmallIntColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseSmallIntColumnSchema.shape,
+);

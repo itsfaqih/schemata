@@ -12,8 +12,8 @@ export const BaseDoubleColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const DoubleColumnSchema = BaseColumnSchema.merge(BaseDoubleColumnSchema);
+export const DoubleColumnSchema = BaseColumnSchema.extend(BaseDoubleColumnSchema.shape);
 
-export const CreateDoubleColumnSchema = BaseCreateColumnSchema.merge(BaseDoubleColumnSchema);
+export const CreateDoubleColumnSchema = BaseCreateColumnSchema.extend(BaseDoubleColumnSchema.shape);
 
-export const UpdateDoubleColumnSchema = BaseUpdateColumnSchema.merge(BaseDoubleColumnSchema);
+export const UpdateDoubleColumnSchema = BaseUpdateColumnSchema.extend(BaseDoubleColumnSchema.shape);

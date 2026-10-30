@@ -103,7 +103,7 @@ function TableColumnComponent(
   } = useForm<UpdateColumnType>({
     resolver: zodResolver(
       UpdateColumnSchema.refine(({ id, name }) => validateUniqueColumnName({ id, name, tableId }), {
-        message: 'Column name is already used',
+        error: 'Column name is already used',
         path: ['name'],
       }),
     ),

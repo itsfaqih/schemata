@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const PositionSchema = z.object({
-  itemId: z.string().uuid(),
-  groupId: z.string().uuid().optional(),
+  itemId: z.uuid(),
+  groupId: z.uuid().optional(),
   x: z.number(),
   y: z.number(),
 });

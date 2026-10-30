@@ -12,12 +12,12 @@ export const BaseMultiPointColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const MultiPointColumnSchema = BaseColumnSchema.merge(BaseMultiPointColumnSchema);
+export const MultiPointColumnSchema = BaseColumnSchema.extend(BaseMultiPointColumnSchema.shape);
 
-export const CreateMultiPointColumnSchema = BaseCreateColumnSchema.merge(
-  BaseMultiPointColumnSchema,
+export const CreateMultiPointColumnSchema = BaseCreateColumnSchema.extend(
+  BaseMultiPointColumnSchema.shape,
 );
 
-export const UpdateMultiPointColumnSchema = BaseUpdateColumnSchema.merge(
-  BaseMultiPointColumnSchema,
+export const UpdateMultiPointColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseMultiPointColumnSchema.shape,
 );

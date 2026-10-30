@@ -13,10 +13,14 @@ export const BaseVarcharColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const VarcharColumnSchema = BaseColumnSchema.merge(BaseVarcharColumnSchema);
+export const VarcharColumnSchema = BaseColumnSchema.extend(BaseVarcharColumnSchema.shape);
 
 export type VarcharColumnType = z.infer<typeof VarcharColumnSchema>;
 
-export const CreateVarcharColumnSchema = BaseCreateColumnSchema.merge(BaseVarcharColumnSchema);
+export const CreateVarcharColumnSchema = BaseCreateColumnSchema.extend(
+  BaseVarcharColumnSchema.shape,
+);
 
-export const UpdateVarcharColumnSchema = BaseUpdateColumnSchema.merge(BaseVarcharColumnSchema);
+export const UpdateVarcharColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseVarcharColumnSchema.shape,
+);

@@ -5,16 +5,16 @@ import { ColumnType } from './column';
 export const RelationActionEnum = z.enum(['CASCADE', 'RESTRICT', 'SET_NULL', 'NO_ACTION']);
 
 export const RelationSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   // catch for backward compat
   name: z.string().catch('fk'),
   source: z.object({
-    columnId: z.string().uuid(),
-    tableId: z.string().uuid(),
+    columnId: z.uuid(),
+    tableId: z.uuid(),
   }),
   target: z.object({
-    columnId: z.string().uuid(),
-    tableId: z.string().uuid(),
+    columnId: z.uuid(),
+    tableId: z.uuid(),
   }),
   // catch for backward compat
   actions: z

@@ -13,8 +13,8 @@ export const BaseBigIntColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const BigIntColumnSchema = BaseColumnSchema.merge(BaseBigIntColumnSchema);
+export const BigIntColumnSchema = BaseColumnSchema.extend(BaseBigIntColumnSchema.shape);
 
-export const CreateBigIntColumnSchema = BaseCreateColumnSchema.merge(BaseBigIntColumnSchema);
+export const CreateBigIntColumnSchema = BaseCreateColumnSchema.extend(BaseBigIntColumnSchema.shape);
 
-export const UpdateBigIntColumnSchema = BaseUpdateColumnSchema.merge(BaseBigIntColumnSchema);
+export const UpdateBigIntColumnSchema = BaseUpdateColumnSchema.extend(BaseBigIntColumnSchema.shape);

@@ -22,7 +22,7 @@ export function useTransformSchemaToReactFlowData() {
 
       if (!position) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: `Position for ${id} is not found`,
         });
 

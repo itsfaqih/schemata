@@ -12,8 +12,8 @@ export const BasePointColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const PointColumnSchema = BaseColumnSchema.merge(BasePointColumnSchema);
+export const PointColumnSchema = BaseColumnSchema.extend(BasePointColumnSchema.shape);
 
-export const CreatePointColumnSchema = BaseCreateColumnSchema.merge(BasePointColumnSchema);
+export const CreatePointColumnSchema = BaseCreateColumnSchema.extend(BasePointColumnSchema.shape);
 
-export const UpdatePointColumnSchema = BaseUpdateColumnSchema.merge(BasePointColumnSchema);
+export const UpdatePointColumnSchema = BaseUpdateColumnSchema.extend(BasePointColumnSchema.shape);

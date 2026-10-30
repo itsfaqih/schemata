@@ -12,8 +12,8 @@ export const BaseFloatColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const FloatColumnSchema = BaseColumnSchema.merge(BaseFloatColumnSchema);
+export const FloatColumnSchema = BaseColumnSchema.extend(BaseFloatColumnSchema.shape);
 
-export const CreateFloatColumnSchema = BaseCreateColumnSchema.merge(BaseFloatColumnSchema);
+export const CreateFloatColumnSchema = BaseCreateColumnSchema.extend(BaseFloatColumnSchema.shape);
 
-export const UpdateFloatColumnSchema = BaseUpdateColumnSchema.merge(BaseFloatColumnSchema);
+export const UpdateFloatColumnSchema = BaseUpdateColumnSchema.extend(BaseFloatColumnSchema.shape);

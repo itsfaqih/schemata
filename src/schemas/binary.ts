@@ -13,8 +13,8 @@ export const BaseBinaryColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const BinaryColumnSchema = BaseColumnSchema.merge(BaseBinaryColumnSchema);
+export const BinaryColumnSchema = BaseColumnSchema.extend(BaseBinaryColumnSchema.shape);
 
-export const CreateBinaryColumnSchema = BaseCreateColumnSchema.merge(BaseBinaryColumnSchema);
+export const CreateBinaryColumnSchema = BaseCreateColumnSchema.extend(BaseBinaryColumnSchema.shape);
 
-export const UpdateBinaryColumnSchema = BaseUpdateColumnSchema.merge(BaseBinaryColumnSchema);
+export const UpdateBinaryColumnSchema = BaseUpdateColumnSchema.extend(BaseBinaryColumnSchema.shape);

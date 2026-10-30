@@ -13,8 +13,12 @@ export const BaseLongBlobColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const LongBlobColumnSchema = BaseColumnSchema.merge(BaseLongBlobColumnSchema);
+export const LongBlobColumnSchema = BaseColumnSchema.extend(BaseLongBlobColumnSchema.shape);
 
-export const CreateLongBlobColumnSchema = BaseCreateColumnSchema.merge(BaseLongBlobColumnSchema);
+export const CreateLongBlobColumnSchema = BaseCreateColumnSchema.extend(
+  BaseLongBlobColumnSchema.shape,
+);
 
-export const UpdateLongBlobColumnSchema = BaseUpdateColumnSchema.merge(BaseLongBlobColumnSchema);
+export const UpdateLongBlobColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseLongBlobColumnSchema.shape,
+);

@@ -7,7 +7,7 @@ export const ValidateUniqueColumnNameSchema = BaseColumnSchema.pick({
   id: true,
   name: true,
 }).extend({
-  tableId: z.string().uuid(),
+  tableId: z.uuid(),
 });
 
 export type ValidateUniqueColumnNameType = z.infer<typeof ValidateUniqueColumnNameSchema>;

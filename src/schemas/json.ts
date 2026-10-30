@@ -12,8 +12,8 @@ export const BaseJsonColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const JsonColumnSchema = BaseColumnSchema.merge(BaseJsonColumnSchema);
+export const JsonColumnSchema = BaseColumnSchema.extend(BaseJsonColumnSchema.shape);
 
-export const CreateJsonColumnSchema = BaseCreateColumnSchema.merge(BaseJsonColumnSchema);
+export const CreateJsonColumnSchema = BaseCreateColumnSchema.extend(BaseJsonColumnSchema.shape);
 
-export const UpdateJsonColumnSchema = BaseUpdateColumnSchema.merge(BaseJsonColumnSchema);
+export const UpdateJsonColumnSchema = BaseUpdateColumnSchema.extend(BaseJsonColumnSchema.shape);

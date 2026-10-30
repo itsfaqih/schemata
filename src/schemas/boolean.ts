@@ -12,8 +12,12 @@ export const BaseBooleanColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const BooleanColumnSchema = BaseColumnSchema.merge(BaseBooleanColumnSchema);
+export const BooleanColumnSchema = BaseColumnSchema.extend(BaseBooleanColumnSchema.shape);
 
-export const CreateBooleanColumnSchema = BaseCreateColumnSchema.merge(BaseBooleanColumnSchema);
+export const CreateBooleanColumnSchema = BaseCreateColumnSchema.extend(
+  BaseBooleanColumnSchema.shape,
+);
 
-export const UpdateBooleanColumnSchema = BaseUpdateColumnSchema.merge(BaseBooleanColumnSchema);
+export const UpdateBooleanColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseBooleanColumnSchema.shape,
+);

@@ -12,12 +12,12 @@ export const BaseLineStringColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const LineStringColumnSchema = BaseColumnSchema.merge(BaseLineStringColumnSchema);
+export const LineStringColumnSchema = BaseColumnSchema.extend(BaseLineStringColumnSchema.shape);
 
-export const CreateLineStringColumnSchema = BaseCreateColumnSchema.merge(
-  BaseLineStringColumnSchema,
+export const CreateLineStringColumnSchema = BaseCreateColumnSchema.extend(
+  BaseLineStringColumnSchema.shape,
 );
 
-export const UpdateLineStringColumnSchema = BaseUpdateColumnSchema.merge(
-  BaseLineStringColumnSchema,
+export const UpdateLineStringColumnSchema = BaseUpdateColumnSchema.extend(
+  BaseLineStringColumnSchema.shape,
 );

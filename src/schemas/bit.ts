@@ -12,8 +12,8 @@ export const BaseBitColumnSchema = z.object({
   attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
 });
 
-export const BitColumnSchema = BaseColumnSchema.merge(BaseBitColumnSchema);
+export const BitColumnSchema = BaseColumnSchema.extend(BaseBitColumnSchema.shape);
 
-export const CreateBitColumnSchema = BaseCreateColumnSchema.merge(BaseBitColumnSchema);
+export const CreateBitColumnSchema = BaseCreateColumnSchema.extend(BaseBitColumnSchema.shape);
 
-export const UpdateBitColumnSchema = BaseUpdateColumnSchema.merge(BaseBitColumnSchema);
+export const UpdateBitColumnSchema = BaseUpdateColumnSchema.extend(BaseBitColumnSchema.shape);
