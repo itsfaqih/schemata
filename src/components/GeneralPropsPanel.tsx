@@ -1,4 +1,4 @@
-import { Check } from 'phosphor-react';
+import { CheckIcon } from '@phosphor-icons/react';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -72,7 +72,7 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
             <IconButton
               type="submit"
               label="Save (ENTER)"
-              icon={Check}
+              icon={CheckIcon}
               severity="primary"
               loading={isSubmitting}
               data-test="submit-schema"

@@ -1,5 +1,5 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
-import { ArrowCounterClockwise, ArrowClockwise } from 'phosphor-react';
+import { ArrowCounterClockwiseIcon, ArrowClockwiseIcon } from '@phosphor-icons/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
 import { EditorPanelContainer } from './EditorPanelContainer';
@@ -40,7 +40,7 @@ export function UtilsPanel() {
       </EditorPanelContainer>
       <EditorPanelContainer className="flex items-center gap-x-2">
         <IconButton
-          icon={ArrowCounterClockwise}
+          icon={ArrowCounterClockwiseIcon}
           label="Undo (CTRL + Z)"
           onClick={undoableService.undo}
           disabled={!undoableService.canUndo}
@@ -48,7 +48,7 @@ export function UtilsPanel() {
         />
         <Separator orientation="vertical" />
         <IconButton
-          icon={ArrowClockwise}
+          icon={ArrowClockwiseIcon}
           label="Redo (CTRL + Y)"
           onClick={undoableService.redo}
           disabled={!undoableService.canRedo}

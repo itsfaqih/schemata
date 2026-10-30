@@ -34,7 +34,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { Tooltip } from './Tooltip';
 import { CreatableCombobox, isMultiValue } from './CreatableCombobox';
-import { DotsSixVertical, FlowArrow } from 'phosphor-react';
+import { DotsSixVerticalIcon, FlowArrowIcon } from '@phosphor-icons/react';
 import { useEditorState } from '@/contexts/EditorStateContext';
 import {
   ColumnType,
@@ -203,7 +203,7 @@ function TableColumnComponent(
           label: 'Add relation',
           'data-test': 'column-context-menu-add-relation',
           onClick: triggerAddRelation,
-          icon: FlowArrow,
+          icon: FlowArrowIcon,
         },
         {
           label: 'Delete',
@@ -431,7 +431,7 @@ function TableColumnComponent(
                 'cursor-grabbing': isDragging,
               })}
             >
-              <DotsSixVertical aria-hidden className="h-5 w-5" />
+              <DotsSixVerticalIcon aria-hidden className="h-5 w-5" />
             </div>
           </div>
         )}
