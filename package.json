@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test:e2e": "playwright test",
     "test:e2e:flow": "playwright test -g",
+    "test:perf": "playwright test -c playwright.perf.config.ts",
     "lint": "pnpm run lint:ts && pnpm run lint:format && pnpm run lint:workflow",
     "lint:fix": "pnpm run lint:ts:fix && pnpm run lint:format:fix",
     "lint:ts": "tsrs -p tsconfig.json && oxlint --type-aware --deny-warnings",
