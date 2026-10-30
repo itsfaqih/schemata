@@ -85,9 +85,8 @@ function ShareLinkButton({ schema }: ShareLinkButtonProps) {
   const [, copy] = useCopyToClipboard();
   const router = useRouter();
 
-  const encodedDatabase = schemaToBase64Url(schema);
-
   const copyLinkToClipboard = () => {
+    const encodedDatabase = schemaToBase64Url(schema);
     const url = `${window.location.origin}/?schema=${encodedDatabase}`;
 
     void copy(url);
