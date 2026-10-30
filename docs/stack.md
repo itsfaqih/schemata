@@ -7,7 +7,7 @@ The tools this project uses, chosen with the user during setup. The other docs n
 | Dependency manager              | pnpm (version pinned in `packageManager`)                                                                  |
 | Dev-server ports and URLs       | portless                                                                                                   |
 | Web frontend                    | Vite + React + TanStack Router (the project's own)                                                         |
-| Interactive UI primitives       | Base UI for new components; existing Radix components move over as they are changed                        |
+| Interactive UI primitives       | Base UI (`@base-ui/react`)                                                                                 |
 | Linter                          | Oxlint, type-aware through oxlint-tsgolint, with the vendored anti-slop plugin (`tools/oxlint/anti-slop/`) |
 | Formatter                       | Oxfmt                                                                                                      |
 | Type checker                    | tsrs (Rust port of the TypeScript 7 compiler)                                                              |
