@@ -1,29 +1,27 @@
 import { Position, internalsSymbol, Node, Edge } from 'reactflow';
 
 // returns the position (top,right,bottom or right) passed node compared to
-function getParams(sourceNode: Node, targetNode: Node, relatedEdge: Edge) {
+function getParams(
+  sourceNode: Node,
+  targetNode: Node,
+  relatedEdge: Edge,
+): [number, number, Position] {
   const centerA = getNodeCenter(sourceNode);
   const centerB = getNodeCenter(targetNode);
 
-  const horizontalDiff = Math.abs(centerA.x - centerB.x);
-  const verticalDiff = Math.abs(centerA.y - centerB.y);
-
-  let position;
-
-  // when the horizontal difference between the nodes is bigger, we use Position.Left or Position.Right for the handle
-  // if (horizontalDiff > verticalDiff) {
-  position = centerA.x > centerB.x ? Position.Left : Position.Right;
-  // } else {
-  // here the vertical difference between the nodes is bigger, so we use Position.Top or Position.Bottom for the handle
-  // position = centerA.y > centerB.y ? Position.Top : Position.Bottom;
-  // }
+  // edges always leave a table from its left or right side
+  const position = centerA.x > centerB.x ? Position.Left : Position.Right;
 
   const [x, y] = getHandleCoordsByPosition(sourceNode, position, relatedEdge);
 
   return [x, y, position];
 }
 
-function getHandleCoordsByPosition(sourceNode: Node, handlePosition: Position, relatedEdge: Edge) {
+function getHandleCoordsByPosition(
+  sourceNode: Node,
+  handlePosition: Position,
+  relatedEdge: Edge,
+): [number, number] {
   const sourceHandleId = relatedEdge.sourceHandle?.split('-').slice(0, -2).join('-');
   const targetHandleId = relatedEdge.targetHandle?.split('-').slice(0, -1).join('-');
 

@@ -1,11 +1,10 @@
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import { CreateColumnType, CreateColumnSchema } from '@/schemas/create-column';
 import { TableWithoutIdType } from '@/schemas/table';
-import { useContext } from 'react';
 import { useReactFlow } from 'reactflow';
 
 export function useCreateColumn() {
-  const { undoableService } = useContext(EditorStateContext);
+  const { undoableService } = useEditorState();
   const reactFlowInstance = useReactFlow<TableWithoutIdType>();
 
   return (columnPayload: CreateColumnType) => {
@@ -23,7 +22,7 @@ export function useCreateColumn() {
             ...newColumn,
             index: newColumn.index ?? node.data.columns.length,
           })
-          .sort((a, b) => a.index - b.index)
+          .toSorted((a, b) => a.index - b.index)
           .map((column, index) => ({ ...column, index }));
 
         return {

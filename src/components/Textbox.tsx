@@ -22,7 +22,7 @@ type TextboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'name' | 'size'>
   label: string;
   srOnlyLabel?: boolean;
   invalid?: boolean;
-  helperText?: string;
+  helperText?: string | undefined;
 };
 
 function TextboxComponent(

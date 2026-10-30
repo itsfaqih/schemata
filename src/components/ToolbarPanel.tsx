@@ -7,14 +7,14 @@ import { clsx } from '@/utils/clsx';
 import { emptyTableWithoutId } from '@/utils/reactflow';
 import { AddTableIcon } from './Icon/AddTableIcon';
 
+function onDragStart(event: DragEvent<HTMLButtonElement>, nodeType: 'table') {
+  event.dataTransfer.setData('application/reactflow', nodeType);
+  event.dataTransfer.effectAllowed = 'move';
+}
+
 export function ToolbarPanel() {
   const { project } = useReactFlow();
   const createTable = useCreateTable();
-
-  const onDragStart = (event: DragEvent<HTMLButtonElement>, nodeType: 'table') => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
-  };
 
   const handleCreateTable = () => {
     const rect = document.body.getBoundingClientRect();

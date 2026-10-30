@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { BaseSyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FocusLock, { AutoFocusInside } from 'react-focus-lock';
@@ -11,7 +11,7 @@ import { handleFocusLockChildrenBlur } from '@/utils/focus-lock';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { useReactFlow } from 'reactflow';
 import { ContextMenu } from './ContextMenu';
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import {
   ClipboardDocumentIcon,
   PencilSquareIcon,
@@ -27,7 +27,7 @@ type TableHeaderProps = {
 };
 
 export function TableHeader({ table }: TableHeaderProps) {
-  const { copyPasteService, undoableService } = useContext(EditorStateContext);
+  const { copyPasteService, undoableService } = useEditorState();
 
   const reactFlowInstance = useReactFlow();
   const createTable = useCreateTable();
@@ -54,15 +54,17 @@ export function TableHeader({ table }: TableHeaderProps) {
     defaultValues: table,
   });
 
-  const [isHeaderFocused, setIsHeaderFocused] = useState(false);
-  const [isRenaming, setIsRenaming] = useState(false);
+  // A just-created table has no name yet and opens straight into renaming
+  const [isCreatedUnnamed] = useState(table.name === '');
+  const [isRenaming, setIsRenaming] = useState(isCreatedUnnamed);
 
-  const onSubmit = handleSubmit(async (data) => {
-    updateTable(data);
-    setIsRenaming(false);
+  const onSubmit = (e?: BaseSyntheticEvent) =>
+    handleSubmit(async (data) => {
+      updateTable(data);
+      setIsRenaming(false);
 
-    queueMicrotask(() => containerRef.current?.focus());
-  });
+      queueMicrotask(() => containerRef.current?.focus());
+    })(e);
 
   const triggerRename = () => {
     setIsRenaming(true);
@@ -73,7 +75,7 @@ export function TableHeader({ table }: TableHeaderProps) {
   };
 
   const triggerDuplicate = () => {
-    const { id, ...tableWithoutId } = table;
+    const { id: _id, ...tableWithoutId } = table;
 
     const rect = containerRef.current?.getBoundingClientRect();
 
@@ -124,16 +126,17 @@ export function TableHeader({ table }: TableHeaderProps) {
 
   // Automatically focus after creation
   useEffect(() => {
-    if (table.name === '') {
-      triggerRename();
-
+    if (isCreatedUnnamed) {
       setTimeout(() => setFocus('name'), 1);
     }
-  }, []);
+  }, [isCreatedUnnamed, setFocus]);
+
+  // `table` is rebuilt on every TableNode render, so reset on its fields rather than its identity
+  const { id, name, columns, indexes } = table;
 
   useEffect(() => {
-    reset(table);
-  }, [reset, table.id, table.name, table.columns, table.indexes]);
+    reset({ id, name, columns, indexes });
+  }, [reset, id, name, columns, indexes]);
 
   return (
     <ContextMenu
@@ -216,8 +219,6 @@ export function TableHeader({ table }: TableHeaderProps) {
             }
           }
         }}
-        onFocus={() => setIsHeaderFocused(true)}
-        onBlur={() => setIsHeaderFocused(false)}
         data-test="table-header"
         className="group -mx-3 rounded px-3 pt-4 font-medium outline-none"
       >
@@ -229,7 +230,7 @@ export function TableHeader({ table }: TableHeaderProps) {
                 if (e.key === 'Escape') {
                   e.preventDefault();
                   e.stopPropagation();
-                  onSubmit();
+                  void onSubmit();
                 }
               }}
               onBlur={(e) => handleFocusLockChildrenBlur(e, onSubmit)}
@@ -244,7 +245,7 @@ export function TableHeader({ table }: TableHeaderProps) {
                   className={clsx([
                     'w-full rounded bg-slate-300 px-2 py-1 outline-2',
                     'focus:outline',
-                    !!errors.name ? 'outline-red-400' : 'outline-sky-400',
+                    errors.name ? 'outline-red-400' : 'outline-sky-400',
                   ])}
                 />
               </AutoFocusInside>

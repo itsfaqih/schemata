@@ -1,12 +1,4 @@
-import {
-  DragEventHandler,
-  useCallback,
-  useRef,
-  useEffect,
-  useContext,
-  MouseEvent,
-  useState,
-} from 'react';
+import { DragEventHandler, useCallback, useRef, useEffect, MouseEvent, useState } from 'react';
 import ReactFlow, { Background, EdgeTypes, NodeTypes, Panel, useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { TableNode } from './TableNode';
@@ -15,14 +7,13 @@ import { EditorPropsPanel } from './EditorPropsPanel';
 import { ToolbarPanel } from './ToolbarPanel';
 import { SimpleFloatingEdge } from './ReactFlow/SimpleFloatingEdge';
 import { useAddCreateTableShortcut } from '@/flow-hooks/useAddCreateTableShortcut';
-import { useHandleSaveLocalSchema } from '@/flow-hooks/useHandleSaveLocalSchema';
 import { isUuid } from '@/utils/zod';
 import { useHandleEdgeMarker } from '@/flow-hooks/useHandleEdgeMarker';
 import { Markers } from './Markers';
 import { useHandleCreateTableOnDrop } from '@/flow-hooks/useHandleCreateTableOnDrop';
 import { emptyTableWithoutId, getColumnIdFromHandleId } from '@/utils/reactflow';
 import { ContextMenu } from './ContextMenu';
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { UtilsPanel } from './UtilsPanel';
 import { AddTableIcon } from './Icon/AddTableIcon';
@@ -31,7 +22,7 @@ import { TableWithoutIdType } from '@/schemas/table';
 import { SchemaType } from '@/schemas/schema';
 import { EdgeType } from '@/schemas/relation';
 
-const nodeTypes: NodeTypes = { table: TableNode } as unknown as NodeTypes;
+const nodeTypes: NodeTypes = { table: TableNode };
 
 const edgeTypes: EdgeTypes = {
   floating: SimpleFloatingEdge,
@@ -45,7 +36,7 @@ export function Canvas({ schema }: CanvasProps) {
   const reactFlowInstance = useReactFlow<TableWithoutIdType, EdgeType>();
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
 
-  const { copyPasteService, defaults, undoableService } = useContext(EditorStateContext);
+  const { copyPasteService, defaults, undoableService } = useEditorState();
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
@@ -61,6 +52,8 @@ export function Canvas({ schema }: CanvasProps) {
   useAddCreateTableShortcut(cursorPosition);
   const handleEdgeMarker = useHandleEdgeMarker();
 
+  const createTable = useCreateTable();
+
   const triggerPaste = (position: { x: number; y: number }) => {
     const {
       context: { clipboard },
@@ -69,7 +62,7 @@ export function Canvas({ schema }: CanvasProps) {
     const finalPosition = reactFlowInstance.project(position);
 
     if (clipboard.status === 'COPIED' && clipboard.type === 'TABLE') {
-      const { id, ...payloadWithoutId } = clipboard.payload;
+      const { id: _id, ...payloadWithoutId } = clipboard.payload;
 
       createTable(payloadWithoutId, finalPosition);
     } else if (clipboard.status === 'CUT' && clipboard.type === 'TABLE') {
@@ -119,8 +112,6 @@ export function Canvas({ schema }: CanvasProps) {
       document.body.removeEventListener('keydown', registerPasteShortcut);
     };
   });
-
-  const createTable = useCreateTable();
 
   const triggerCreateTable = (e: MouseEvent) => {
     const position = reactFlowInstance.project({
@@ -174,6 +165,10 @@ export function Canvas({ schema }: CanvasProps) {
                   return edge;
                 }
 
+                if (!edge.sourceHandle || !edge.targetHandle) {
+                  throw Error(`Handle id for edge ${edge.id} is empty`);
+                }
+
                 const { markerEnd, markerStart } = handleEdgeMarker(edge);
 
                 const sourceTable = reactFlowInstance
@@ -184,7 +179,7 @@ export function Canvas({ schema }: CanvasProps) {
                   .getNodes()
                   .find((node) => node.id === edge.target)?.data;
 
-                const sourceColumnId = getColumnIdFromHandleId(edge.sourceHandle as string);
+                const sourceColumnId = getColumnIdFromHandleId(edge.sourceHandle);
 
                 const sourceColumn = sourceTable?.columns.find(
                   (column) => column.id === sourceColumnId,
@@ -198,7 +193,7 @@ export function Canvas({ schema }: CanvasProps) {
                   data: {
                     name: `fk_${sourceTable?.name}_${targetTable?.name}_${sourceColumn?.name}`,
                     sourceColumnId,
-                    targetColumnId: getColumnIdFromHandleId(edge.targetHandle as string),
+                    targetColumnId: getColumnIdFromHandleId(edge.targetHandle),
                     actions: { onUpdate: 'RESTRICT' as const, onDelete: 'RESTRICT' as const },
                   },
                 };

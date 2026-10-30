@@ -4,13 +4,12 @@ import { Modal } from './Modal';
 import { IconButton } from './IconButton';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-type BaseDialogProps = {
+type BaseDialogProps = Pick<Dialog.DialogProps, 'open'> & {
   title: string;
   children: ReactNode;
   trigger?: ReactNode;
   noCloseButton?: boolean;
   onClose?: () => void;
-  open?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
   closeOnInteractOutside?: boolean;
 };
@@ -21,13 +20,13 @@ export function BaseDialog({
   trigger,
   noCloseButton,
   onClose,
-  open,
   onOpenChange,
   closeOnInteractOutside,
+  ...rootProps
 }: BaseDialogProps) {
   return (
     <Dialog.Root
-      open={open}
+      {...rootProps}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
           onClose?.();

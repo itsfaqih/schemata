@@ -67,7 +67,6 @@ type IconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' 
   label: string;
   icon: ElementType;
   iconProps?: ComponentPropsWithoutRef<ElementType>;
-  darkMode?: boolean;
   loading?: boolean;
   filled?: boolean;
   size?: VariantProps<typeof iconButtonIconClass>['size'];
@@ -80,7 +79,6 @@ function IconButtonComponent(
     icon: Icon,
     className,
     iconProps,
-    darkMode,
     loading = false,
     filled = false,
     size = 'medium',

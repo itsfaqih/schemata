@@ -1,7 +1,10 @@
 import * as Checkbox from '@radix-ui/react-checkbox';
-import { ButtonHTMLAttributes, forwardRef, ReactNode, Ref, useRef, useState } from 'react';
+import { ButtonHTMLAttributes, forwardRef, ReactNode, Ref, useState } from 'react';
 
-type CustomCheckboxProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onChange'> & {
+type CustomCheckboxProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'type' | 'onChange' | 'defaultChecked'
+> & {
   name: string;
   checkedElement: ReactNode;
   uncheckedElement: ReactNode;
@@ -39,9 +42,9 @@ function CustomCheckboxComponent(
       id={elementId}
       name={name}
       checked={checkboxState}
-      onCheckedChange={(checked) => {
-        setCheckboxState(checked);
-        onChange?.(checked);
+      onCheckedChange={(nextChecked) => {
+        setCheckboxState(nextChecked);
+        onChange?.(nextChecked);
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {

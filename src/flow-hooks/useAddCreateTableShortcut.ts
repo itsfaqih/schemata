@@ -44,5 +44,5 @@ export function useAddCreateTableShortcut(position: { x: number; y: number }) {
     return () => {
       document.body.removeEventListener('keydown', handleCreateTableShortcut);
     };
-  }, [createTable, position]);
+  }, [createTable, position, reactFlowInstance]);
 }

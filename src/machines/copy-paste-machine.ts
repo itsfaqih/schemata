@@ -11,11 +11,13 @@ type ClipboardPayloadWithStatusType =
   | ({ status: 'COPIED' | 'CUT' } & ClipboardPayloadType)
   | { status: 'EMPTY' };
 
+type CopyPasteMachineContext = { clipboard: ClipboardPayloadWithStatusType };
+
 type CopyPasteMachineEvent =
   | { type: 'COPY'; data: ClipboardPayloadType }
   | { type: 'CUT'; data: ClipboardPayloadType; reactFlowInstance: ReactFlowInstance };
 
-export const copyPasteMachine = createMachine(
+export const copyPasteMachine = createMachine<CopyPasteMachineContext, CopyPasteMachineEvent>(
   {
     id: 'COPY_PASTE_MACHINE',
     initial: 'EMPTY_CLIPBOARD',
@@ -42,10 +44,6 @@ export const copyPasteMachine = createMachine(
           },
         },
       },
-    },
-    schema: {
-      context: {} as { clipboard: ClipboardPayloadWithStatusType },
-      events: {} as CopyPasteMachineEvent,
     },
     context: { clipboard: { status: 'EMPTY' } },
     predictableActionArguments: true,

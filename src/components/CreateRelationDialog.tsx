@@ -1,9 +1,9 @@
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import { CreateRelationSchema, CreateRelationType, RelationActionEnum } from '@/schemas/relation';
 import * as Accordion from '@radix-ui/react-accordion';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm, useWatch, Controller } from 'react-hook-form';
 import { BaseDialog } from './BaseDialog';
 import { Checkbox } from './Checkbox';
 import { Combobox } from './Combobox';
@@ -26,7 +26,7 @@ export type CreateRelationDialogProps = {
 export function CreateRelationDialog() {
   const {
     createRelationDialogStore: { source, setSource },
-  } = useContext(EditorStateContext);
+  } = useEditorState();
 
   const { data: schema } = useLocalSchemaQuery();
 
@@ -38,20 +38,18 @@ export function CreateRelationDialog() {
     reset,
     resetField,
     setValue,
-    watch,
   } = useForm<CreateRelationType>({
     resolver: zodResolver(CreateRelationSchema),
     defaultValues: {
-      source: {
-        columnId: source?.columnId,
-        tableId: source?.tableId,
-      },
+      source: source ?? {},
       actions: { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' },
     },
   });
 
+  const targetTableId = useWatch({ control, name: 'target.tableId' });
+
   const sourceTable = schema?.tables.find((table) => table.id === source?.tableId);
-  const targetTable = schema?.tables.find((table) => table.id === watch('target.tableId'));
+  const targetTable = schema?.tables.find((table) => table.id === targetTableId);
 
   const sourceColumn = sourceTable?.columns.find((column) => column.id === source?.columnId);
 
@@ -67,10 +65,10 @@ export function CreateRelationDialog() {
 
   useEffect(() => {
     if (source) {
-      setValue('source.columnId', source?.columnId);
-      setValue('source.tableId', source?.tableId);
+      setValue('source.columnId', source.columnId);
+      setValue('source.tableId', source.tableId);
     }
-  }, [source]);
+  }, [source, setValue]);
 
   return (
     <BaseDialog
@@ -84,7 +82,7 @@ export function CreateRelationDialog() {
         }
       }}
     >
-      <div className="pt-4 pb-2">
+      <div className="pb-2 pt-4">
         <form onSubmit={onSubmit} className="flex flex-col gap-y-4">
           <div className="flex gap-x-4">
             <FieldSet label="Source" className="w-64">
@@ -181,7 +179,7 @@ export function CreateRelationDialog() {
                           .map((column) => ({ label: column.name, value: column.id }))
                           .find((option) => option.value === value) ?? null
                       }
-                      isDisabled={watch('target.tableId') === undefined || isSubmitting}
+                      isDisabled={targetTableId === undefined || isSubmitting}
                       data-test="relation-target-column-combobox"
                     />
                   )}
@@ -227,9 +225,11 @@ export function CreateRelationDialog() {
                               onChange(option.value);
                             }
                           }}
-                          value={RelationActionEnum.options
-                            .map((action) => ({ label: action, value: action }))
-                            .find((option) => option.value === value)}
+                          value={
+                            RelationActionEnum.options
+                              .map((action) => ({ label: action, value: action }))
+                              .find((option) => option.value === value) ?? null
+                          }
                           data-test="relation-action-on-update-combobox"
                           className="w-1/2"
                         />
@@ -253,9 +253,11 @@ export function CreateRelationDialog() {
                               onChange(option.value);
                             }
                           }}
-                          value={RelationActionEnum.options
-                            .map((action) => ({ label: action, value: action }))
-                            .find((option) => option.value === value)}
+                          value={
+                            RelationActionEnum.options
+                              .map((action) => ({ label: action, value: action }))
+                              .find((option) => option.value === value) ?? null
+                          }
                           data-test="relation-action-on-delete-combobox"
                           className="w-1/2"
                         />

@@ -1,6 +1,6 @@
 import { TableType } from '@/schemas/table';
 import { useDroppable } from '@dnd-kit/core';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { useStore } from 'reactflow';
 import { TableColumnListItem } from './TableColumnListItem';
 

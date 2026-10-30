@@ -1,15 +1,14 @@
 import { clsx } from '@/utils/clsx';
 import * as RadixSeparator from '@radix-ui/react-separator';
 
-type SeparatorProps = {
-  orientation?: 'horizontal' | 'vertical';
+type SeparatorProps = Pick<RadixSeparator.SeparatorProps, 'orientation'> & {
   className?: string;
 };
 
-export function Separator({ orientation, className }: SeparatorProps) {
+export function Separator({ className, ...rootProps }: SeparatorProps) {
   return (
     <RadixSeparator.Root
-      orientation={orientation}
+      {...rootProps}
       className={clsx([
         'bg-gray-200',
         'rdx-orientation-horizontal:h-px rdx-orientation-horizontal:w-full',

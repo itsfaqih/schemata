@@ -1,10 +1,9 @@
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import { TableType, TableWithoutIdType } from '@/schemas/table';
-import { useContext } from 'react';
 import { useReactFlow } from 'reactflow';
 
 export function useDeleteTable() {
-  const { undoableService } = useContext(EditorStateContext);
+  const { undoableService } = useEditorState();
   const reactFlowInstance = useReactFlow<TableWithoutIdType>();
 
   return (tableId: TableType['id']) => {

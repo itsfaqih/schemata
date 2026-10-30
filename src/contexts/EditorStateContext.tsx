@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 import { useInterpret } from '@xstate/react';
 import { copyPasteMachine } from '@/machines/copy-paste-machine';
 import { InterpreterFrom } from 'xstate';
@@ -12,10 +12,10 @@ import { TableNodeType } from '@/schemas/table';
 
 type ReactFlowDataType = { nodes: TableNodeType[]; edges: Edge[] };
 
-export const EditorStateContext = createContext({
-  copyPasteService: {} as InterpreterFrom<typeof copyPasteMachine>,
-  defaults: {} as ReactFlowDataType,
-  undoableService: {} as {
+type EditorState = {
+  copyPasteService: InterpreterFrom<typeof copyPasteMachine>;
+  defaults: ReactFlowDataType;
+  undoableService: {
     data: ReactFlowDataType;
     setData: (value: (currentData: ReactFlowDataType) => ReactFlowDataType) => void;
     updateData: (forcePass?: boolean) => void;
@@ -23,9 +23,21 @@ export const EditorStateContext = createContext({
     redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
-  },
-  createRelationDialogStore: {} as CreateRelationDialogProps,
-});
+  };
+  createRelationDialogStore: CreateRelationDialogProps;
+};
+
+const EditorStateContext = createContext<EditorState | null>(null);
+
+export function useEditorState(): EditorState {
+  const editorState = useContext(EditorStateContext);
+
+  if (!editorState) {
+    throw Error('useEditorState must be used within EditorStateProvider');
+  }
+
+  return editorState;
+}
 
 type EditorStateProviderProps = {
   schema: SchemaType;
@@ -37,7 +49,8 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
 
   const transformSchemaToReactFlowData = useTransformSchemaToReactFlowData();
 
-  const defaults = useMemo(() => transformSchemaToReactFlowData.parse(schema), []);
+  // Parsed once: later schema changes flow through the undoable state, not the defaults
+  const [defaults] = useState(() => transformSchemaToReactFlowData.parse(schema));
 
   const [
     reactFlowData,
@@ -83,7 +96,11 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
   const handleUndo = () => {
     undo();
 
-    const [past] = pasts.slice(-1);
+    const past = pasts.at(-1);
+
+    if (!past) {
+      return;
+    }
 
     reactFlowInstance.setNodes(past.nodes);
     reactFlowInstance.setEdges(past.edges);
@@ -92,7 +109,11 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
   const handleRedo = () => {
     redo();
 
-    const [future] = futures.slice(0, 1);
+    const future = futures[0];
+
+    if (!future) {
+      return;
+    }
 
     reactFlowInstance.setNodes(future.nodes);
     reactFlowInstance.setEdges(future.edges);

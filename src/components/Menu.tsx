@@ -23,8 +23,8 @@ function MenuContent(
 }
 
 type MenuItemProps = HTMLAttributes<HTMLDivElement> & {
-  icon?: ElementType;
-  kbd?: string;
+  icon?: ElementType | undefined;
+  kbd?: string | undefined;
 };
 
 function MenuItem(

@@ -18,17 +18,13 @@ function Option<
   Option extends ComboboxOption,
   isMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
->({ data, ...props }: OptionProps<Option, isMulti, Group> & { 'data-test'?: string }) {
-  return (
-    <components.Option
-      {...props}
-      innerProps={{
-        ...props.innerProps,
-        // @ts-ignore
-        'data-test': `${props.selectProps['data-test']}-${data.value}`,
-      }}
-    />
-  );
+>(props: OptionProps<Option, isMulti, Group> & { 'data-test'?: string }) {
+  const innerProps: OptionProps<Option, isMulti, Group>['innerProps'] & { 'data-test': string } = {
+    ...props.innerProps,
+    'data-test': `${props.selectProps['data-test']}-${props.data.value}`,
+  };
+
+  return <components.Option {...props} innerProps={innerProps} />;
 }
 
 function Control<
@@ -36,13 +32,11 @@ function Control<
   isMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(props: ControlProps<Option, isMulti, Group> & { 'data-test'?: string }) {
-  return (
-    <components.Control
-      {...props}
-      // @ts-ignore
-      innerProps={{ ...props.innerProps, 'data-test': props.selectProps['data-test'] }}
-    />
-  );
+  const innerProps: ControlProps<Option, isMulti, Group>['innerProps'] & {
+    'data-test': string | undefined;
+  } = { ...props.innerProps, 'data-test': props.selectProps['data-test'] };
+
+  return <components.Control {...props} innerProps={innerProps} />;
 }
 
 type ComboboxProps<

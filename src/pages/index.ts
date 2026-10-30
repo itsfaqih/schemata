@@ -1,13 +1,12 @@
 import { SchemaType } from '@/schemas/schema';
 import { base64UrlToSchema } from '@/utils/schema';
-import { QueryClient } from '@tanstack/react-query';
 import { createRouteConfig, createReactRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { Editor } from './Editor';
 
 export const rootRoute = createRouteConfig();
 
-function routeConfig(queryClient: QueryClient) {
+function routeConfig() {
   return rootRoute.addChildren([
     rootRoute.createRoute({
       path: '/',
@@ -23,13 +22,13 @@ function routeConfig(queryClient: QueryClient) {
       },
       validateSearch: z.object({
         schema: z.string().optional(),
-      }).parse,
+      }),
     }),
   ]);
 }
 
-export function router(queryClient: QueryClient) {
+export function router() {
   return createReactRouter({
-    routeConfig: routeConfig(queryClient),
+    routeConfig: routeConfig(),
   });
 }
