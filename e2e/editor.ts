@@ -77,3 +77,23 @@ export async function relationMenu(page: Page): Promise<void> {
   await relation.hover();
   await relation.getByRole('button').click();
 }
+
+// The relation line is the focusable path inside the relation; it has no accessible name of its own.
+export function relationLine(page: Page): Locator {
+  return page.getByRole('button', { name: /^Edge from/ }).locator('path[tabindex="0"]');
+}
+
+// The line's midpoint holds the menu button, so the line is clicked a short way along its path
+// from the source table.
+export async function clickRelationLine(page: Page): Promise<void> {
+  const point = await relationLine(page).evaluate((path: SVGPathElement) => {
+    const { x, y } = path.getPointAtLength(path.getTotalLength() * 0.15);
+    const matrix = path.getScreenCTM();
+
+    if (!matrix) throw Error('The relation line is not rendered');
+
+    return { x: x * matrix.a + matrix.e, y: y * matrix.d + matrix.f };
+  });
+
+  await page.mouse.click(point.x, point.y);
+}

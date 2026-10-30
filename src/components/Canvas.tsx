@@ -153,7 +153,6 @@ export function Canvas({ schema }: CanvasProps) {
           edgeTypes={edgeTypes}
           onDragOver={onDragOver}
           onDrop={onDrop}
-          elevateEdgesOnSelect
           defaultEdgeOptions={{ type: 'floating' }}
           onNodesDelete={() => undoableService.updateData(true)}
           onEdgesDelete={() => undoableService.updateData(true)}
