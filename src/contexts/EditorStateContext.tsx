@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
-import { useInterpret } from '@xstate/react';
+import { useActorRef } from '@xstate/react';
 import { copyPasteMachine } from '@/machines/copy-paste-machine';
-import { InterpreterFrom } from 'xstate';
+import { ActorRefFrom } from 'xstate';
 import { SchemaType } from '@/schemas/schema';
 import { Edge, useReactFlow } from 'reactflow';
 import useUndoable from 'use-undoable';
@@ -13,7 +13,7 @@ import { TableNodeType } from '@/schemas/table';
 type ReactFlowDataType = { nodes: TableNodeType[]; edges: Edge[] };
 
 type EditorState = {
-  copyPasteService: InterpreterFrom<typeof copyPasteMachine>;
+  copyPasteService: ActorRefFrom<typeof copyPasteMachine>;
   defaults: ReactFlowDataType;
   undoableService: {
     data: ReactFlowDataType;
@@ -45,7 +45,7 @@ type EditorStateProviderProps = {
 };
 
 export function EditorStateProvider({ schema, children }: EditorStateProviderProps) {
-  const copyPasteService = useInterpret(copyPasteMachine);
+  const copyPasteService = useActorRef(copyPasteMachine);
 
   const transformSchemaToReactFlowData = useTransformSchemaToReactFlowData();
 

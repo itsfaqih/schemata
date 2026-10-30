@@ -218,8 +218,8 @@ importers:
         specifier: ^1.170.46
         version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@xstate/react':
-        specifier: ^3.0.1
-        version: 3.0.1(@types/react@19.3.0)(react@19.3.1)(xstate@4.35.1)
+        specifier: ^6.1.0
+        version: 6.1.0(@types/react@19.3.0)(react@19.3.1)(xstate@5.33.3)
       class-variance-authority:
         specifier: ^0.4.0
         version: 0.4.0(typescript@4.9.4)
@@ -275,8 +275,8 @@ importers:
         specifier: ^2.9.1
         version: 2.9.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       xstate:
-        specifier: ^4.35.1
-        version: 4.35.1
+        specifier: ^5.33.3
+        version: 5.33.3
       zod:
         specifier: ^3.20.2
         version: 3.20.2
@@ -2152,15 +2152,12 @@ packages:
   '@vitest/utils@5.0.5':
     resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
 
-  '@xstate/react@3.0.1':
-    resolution: {integrity: sha512-/tq/gg92P9ke8J+yDNDBv5/PAxBvXJf2cYyGDByzgtl5wKaxKxzDT82Gj3eWlCJXkrBg4J5/V47//gRJuVH2fA==}
+  '@xstate/react@6.1.0':
+    resolution: {integrity: sha512-ep9F0jGTI63B/jE8GHdMpUqtuz7yRebNaKv8EMUaiSi29NOglywc2X2YSOV/ygbIK+LtmgZ0q9anoEA2iBSEOw==}
     peerDependencies:
-      '@xstate/fsm': ^2.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      xstate: ^4.33.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      xstate: ^5.28.0
     peerDependenciesMeta:
-      '@xstate/fsm':
-        optional: true
       xstate:
         optional: true
 
@@ -3783,8 +3780,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  xstate@4.35.1:
-    resolution: {integrity: sha512-imxk6+76HJRt7qHrUnWnAjaHHhAsUKoVa+PXkyaPd3Gll0VjZsy6/L+FkatIJnjI5Kpwp0R8k63KfIFnzVLskQ==}
+  xstate@5.33.3:
+    resolution: {integrity: sha512-AnDRjS/GyKHmbA1PyhVCYBqYsA7EGe3KGgeD0ht3NFsXzoz7leX/HQDFX9QlHFJ/ltLHPsgChJYwPzRvB/0b4g==}
 
   yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
@@ -5580,13 +5577,13 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.2.0
 
-  '@xstate/react@3.0.1(@types/react@19.3.0)(react@19.3.1)(xstate@4.35.1)':
+  '@xstate/react@6.1.0(@types/react@19.3.0)(react@19.3.1)(xstate@5.33.3)':
     dependencies:
       react: 19.3.1
       use-isomorphic-layout-effect: 1.2.1(@types/react@19.3.0)(react@19.3.1)
       use-sync-external-store: 1.7.0(react@19.3.1)
     optionalDependencies:
-      xstate: 4.35.1
+      xstate: 5.33.3
     transitivePeerDependencies:
       - '@types/react'
 
@@ -7042,7 +7039,7 @@ snapshots:
 
   ws@8.22.0: {}
 
-  xstate@4.35.1: {}
+  xstate@5.33.3: {}
 
   yaml@1.10.2: {}
 
