@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "setup": "pnpm install --frozen-lockfile && playwright install chromium",
+    "setup": "pnpm install --frozen-lockfile && pnpm exec playwright install chromium",
     "dev": "portless run vite",
     "build": "vite build",
     "preview": "vite preview"
