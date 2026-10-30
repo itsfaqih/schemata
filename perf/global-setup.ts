@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import path from 'node:path';
@@ -22,6 +23,24 @@ const contentTypes = new Map([
 ]);
 
 const compressible = new Set(['.html', '.js', '.css', '.svg']);
+
+// Cloudflare Pages' _headers format: an unindented path pattern (`*` matches anything), then indented `Name: value` lines
+function parseHeaderRules(source: string): { pattern: RegExp; headers: Map<string, string> }[] {
+  const rules: { pattern: RegExp; headers: Map<string, string> }[] = [];
+
+  for (const line of source.split('\n')) {
+    const header = /^\s+([^:]+):\s*(.*)$/.exec(line);
+
+    if (header?.[1] && header[2] !== undefined) {
+      rules.at(-1)?.headers.set(header[1].toLowerCase(), header[2].trim());
+    } else if (line.trim()) {
+      const escaped = line.trim().replaceAll(/[.+?^${}()|[\]\\]/g, '\\$&');
+      rules.push({ pattern: new RegExp(`^${escaped.replaceAll('*', '.*')}$`), headers: new Map() });
+    }
+  }
+
+  return rules;
+}
 
 async function readAsset(urlPath: string): Promise<{ body: Buffer; extension: string }> {
   const filePath = path.join(distDir, path.normalize(urlPath));
@@ -49,14 +68,37 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     throw new Error(`vite build exited with ${String(build.status)}`);
   }
 
-  // Serves dist the way Cloudflare serves production: brotli at about quality 4 for text assets
+  const headerRules = parseHeaderRules(
+    await readFile(path.join(distDir, '_headers'), 'utf8').catch(() => ''),
+  );
+
+  // Serves dist the way Cloudflare Pages serves production: brotli at about quality 4 for text assets, an ETag on
+  // every response, and the _headers rules. Without a rule a response must revalidate, which is what Pages' 4-hour
+  // default becomes once it lapses
   const server = createServer((request, response) => {
     const urlPath = new URL(request.url ?? '/', 'http://localhost').pathname;
 
     void readAsset(urlPath).then(async ({ body, extension }) => {
+      const etag = `W/"${createHash('md5').update(body).digest('hex')}"`;
+
       const headers = new Map([
         ['content-type', contentTypes.get(extension) ?? 'application/octet-stream'],
+        ['cache-control', 'public, max-age=0, must-revalidate'],
+        ['etag', etag],
       ]);
+
+      for (const rule of headerRules) {
+        if (rule.pattern.test(urlPath)) {
+          for (const [name, value] of rule.headers) headers.set(name, value);
+        }
+      }
+
+      if (request.headers['if-none-match'] === etag) {
+        response.writeHead(304, Object.fromEntries(headers));
+        response.end();
+
+        return;
+      }
 
       const acceptsBrotli = request.headers['accept-encoding']?.includes('br') ?? false;
 

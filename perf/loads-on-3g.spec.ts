@@ -176,3 +176,49 @@ test(`loads the editor within ${budgetMs / 1000}s on ${profileName}`, async ({ b
     budgetMs,
   );
 });
+
+test(`a repeat visit on ${profileName} takes every hashed asset from the cache`, async ({
+  browser,
+}) => {
+  const baseUrl = process.env['PERF_BASE_URL'];
+  const profile = profiles.get(profileName);
+
+  if (!baseUrl || !profile) return;
+
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+
+  await page.goto(baseUrl);
+  await page.locator('[data-test="create-table-button"]').waitFor();
+  await page.goto('about:blank');
+
+  const assetResponses = new Map<string, string>();
+  const servedFromCache = new Set<string>();
+
+  await cdp.send('Network.enable');
+  cdp.on('Network.requestServedFromCache', ({ requestId }) => servedFromCache.add(requestId));
+  cdp.on('Network.responseReceived', ({ requestId, response }) => {
+    if (new URL(response.url).pathname.startsWith('/assets/') && !response.fromDiskCache) {
+      assetResponses.set(requestId, `${response.status} ${response.url}`);
+    }
+  });
+  await cdp.send('Network.emulateNetworkConditions', {
+    offline: false,
+    latency: profile.latencyMs,
+    downloadThroughput: (profile.downloadKbps * 1024) / 8,
+    uploadThroughput: (profile.uploadKbps * 1024) / 8,
+  });
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: profile.cpuSlowdown });
+
+  await page.goto(baseUrl);
+  await page.locator('[data-test="create-table-button"]').waitFor();
+
+  await context.close();
+
+  const assetsFromNetwork = [...assetResponses].flatMap(([requestId, response]) =>
+    servedFromCache.has(requestId) ? [] : [response],
+  );
+
+  expect(assetsFromNetwork, 'hashed assets fetched or revalidated on the repeat visit').toEqual([]);
+});
