@@ -1,9 +1,9 @@
 import { emptyTableWithoutId } from '@/utils/reactflow';
-import { useEffect } from 'react';
+import { RefObject, useEffect } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useCreateTable } from './useCreateTable';
 
-export function useAddCreateTableShortcut(position: { x: number; y: number }) {
+export function useAddCreateTableShortcut(cursorPositionRef: RefObject<{ x: number; y: number }>) {
   const reactFlowInstance = useReactFlow();
   const createTable = useCreateTable();
 
@@ -21,6 +21,8 @@ export function useAddCreateTableShortcut(position: { x: number; y: number }) {
       if (e.target === e.currentTarget && e.key === 't') {
         e.preventDefault();
         e.stopPropagation();
+
+        const position = cursorPositionRef.current;
 
         let finalPosition = position;
 
@@ -44,5 +46,5 @@ export function useAddCreateTableShortcut(position: { x: number; y: number }) {
     return () => {
       document.body.removeEventListener('keydown', handleCreateTableShortcut);
     };
-  }, [createTable, position, reactFlowInstance]);
+  }, [createTable, cursorPositionRef, reactFlowInstance]);
 }

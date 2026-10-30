@@ -1,5 +1,6 @@
-import { DragEventHandler, useCallback, useEffect, MouseEvent, useState } from 'react';
+import { DragEventHandler, useCallback, useEffect, MouseEvent, useRef } from 'react';
 import { ReactFlow, Background, EdgeTypes, NodeTypes, Panel, useReactFlow } from '@xyflow/react';
+import { useSelector } from '@xstate/react';
 import { TableNode } from './TableNode';
 import { GeneralPropsPanel } from './GeneralPropsPanel';
 import { EditorPropsPanel } from './EditorPropsPanel';
@@ -43,9 +44,10 @@ export function Canvas({ schema }: CanvasProps) {
 
   const onDrop: DragEventHandler<HTMLDivElement> = useHandleCreateTableOnDrop();
 
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  // Read only by keyboard shortcuts, so a mouse move does not re-render the canvas
+  const cursorPositionRef = useRef({ x: 0, y: 0 });
 
-  useAddCreateTableShortcut(cursorPosition);
+  useAddCreateTableShortcut(cursorPositionRef);
   const handleEdgeMarker = useHandleEdgeMarker();
 
   const createTable = useCreateTable();
@@ -96,7 +98,7 @@ export function Canvas({ schema }: CanvasProps) {
       if (e.target === e.currentTarget && e.ctrlKey && e.key === 'v') {
         e.preventDefault();
         e.stopPropagation();
-        triggerPaste(cursorPosition);
+        triggerPaste(cursorPositionRef.current);
       }
     };
 
@@ -118,7 +120,7 @@ export function Canvas({ schema }: CanvasProps) {
     createTable(emptyTableWithoutId(), position);
   };
 
-  const canPaste = copyPasteService.getSnapshot().matches('FILLED_CLIPBOARD');
+  const canPaste = useSelector(copyPasteService, (state) => state.matches('FILLED_CLIPBOARD'));
 
   return (
     <ContextMenu
@@ -200,7 +202,9 @@ export function Canvas({ schema }: CanvasProps) {
           onConnectEnd={() => {
             undoableService.updateData(true);
           }}
-          onPaneMouseMove={(e) => setCursorPosition({ x: e.clientX, y: e.clientY })}
+          onPaneMouseMove={(e) => {
+            cursorPositionRef.current = { x: e.clientX, y: e.clientY };
+          }}
           data-test="canvas"
         >
           <Markers />

@@ -74,8 +74,8 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
 
   // Serves dist the way Cloudflare Pages serves production: brotli at about quality 4 for text assets, an ETag on
   // every response, and the _headers rules. Without a rule a response must revalidate, which is what Pages' 4-hour
-  // default becomes once it lapses
-  const server = createServer((request, response) => {
+  // default becomes once it lapses. The header limit fits a large schema in the ?schema= share link
+  const server = createServer({ maxHeaderSize: 256 * 1024 }, (request, response) => {
     const urlPath = new URL(request.url ?? '/', 'http://localhost').pathname;
 
     void readAsset(urlPath).then(async ({ body, extension }) => {
