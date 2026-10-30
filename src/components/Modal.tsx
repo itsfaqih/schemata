@@ -7,9 +7,9 @@ const ModalOvelay = forwardRef(
       <div
         ref={ref}
         className={clsx(
-          'fixed inset-0 flex items-center justify-center bg-slate-900/70 duration-1000',
-          'data-[open]:animate-in data-[open]:fade-in',
-          'data-[closed]:animate-out data-[closed]:fade-out',
+          'fixed inset-0 flex items-center justify-center bg-slate-900/70',
+          'data-open:animate-in data-open:fade-in',
+          'data-closed:animate-out data-closed:fade-out',
           className,
         )}
         {...props}
@@ -26,9 +26,9 @@ const ModalContent = forwardRef(
       <div
         ref={ref}
         className={clsx(
-          'rounded-lg bg-white py-4 px-5 shadow-2xl duration-1000',
-          'data-[open]:animate-in data-[open]:fade-in data-[open]:slide-in-from-bottom-8',
-          'data-[closed]:animate-out data-[closed]:fade-out data-[closed]:slide-out-to-bottom-8',
+          'rounded-lg bg-white py-4 px-5 shadow-2xl',
+          'data-open:animate-in data-open:fade-in data-open:slide-in-from-bottom-8',
+          'data-closed:animate-out data-closed:fade-out data-closed:slide-out-to-bottom-8',
           className,
         )}
         {...props}

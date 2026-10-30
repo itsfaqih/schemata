@@ -10,7 +10,7 @@ export function EditorPanelContainer({ children, className }: EditorPanelContain
   return (
     <div
       className={clsx(
-        'h-12 rounded-lg border border-slate-200 bg-white/80 py-2.5 px-3 shadow-sm',
+        'h-12 rounded-lg border border-slate-200 bg-white/80 py-2.5 px-3 shadow-xs',
         className,
       )}
     >

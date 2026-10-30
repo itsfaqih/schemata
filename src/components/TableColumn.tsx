@@ -270,8 +270,8 @@ function TableColumnComponent(
         style={style}
         data-test="column"
         className={clsx(
-          'group bg-white py-3 px-4 outline-2 outline-sky-500',
-          'focus:relative focus:z-10 focus:rounded focus:outline',
+          'group bg-white py-3 px-4 outline-sky-500',
+          'focus:relative focus:z-10 focus:rounded-sm focus:outline-2',
           { 'hover:bg-slate-100': !isEditing, 'relative z-10': isDragging },
           className,
         )}
@@ -405,7 +405,7 @@ function TableColumnComponent(
                 </Tooltip>
               )}
             </span>
-            <span className="ml-2 mr-4 font-medium text-slate-600">
+            <span className="mr-4 ml-2 font-medium text-slate-600">
               <span data-test="column-name">{column.name}</span>
             </span>
             <span className="ml-auto font-medium text-sky-700">
@@ -426,7 +426,7 @@ function TableColumnComponent(
                   e.stopPropagation();
                 }
               }}
-              className={clsx('noimage ml-3 rounded outline-2 outline-sky-500', {
+              className={clsx('noimage ml-3 rounded-sm outline-sky-500 [outline-width:2px]', {
                 'cursor-grab': !isDragging,
                 'cursor-grabbing': isDragging,
               })}

@@ -1,6 +1,5 @@
 import { DragEventHandler, useCallback, useEffect, MouseEvent, useState } from 'react';
 import { ReactFlow, Background, EdgeTypes, NodeTypes, Panel, useReactFlow } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import { TableNode } from './TableNode';
 import { GeneralPropsPanel } from './GeneralPropsPanel';
 import { EditorPropsPanel } from './EditorPropsPanel';

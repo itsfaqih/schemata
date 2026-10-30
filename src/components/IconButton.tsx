@@ -18,7 +18,7 @@ const iconButtonIconClass = cva([], {
   },
 });
 
-const iconButtonClass = cva(['h-7 w-7 flex items-center justify-center rounded'], {
+const iconButtonClass = cva(['h-7 w-7 flex items-center justify-center rounded-sm'], {
   variants: {
     filled: {
       true: [
@@ -34,14 +34,14 @@ const iconButtonClass = cva(['h-7 w-7 flex items-center justify-center rounded']
         'hover:text-slate-700',
         'enabled:active:text-slate-700',
         'focus:text-slate-700',
-        'disabled:text-opacity-50',
+        'disabled:text-slate-600/50',
       ],
       dark: [
         'text-white ring-white',
-        'hover:text-opacity-90',
-        'enabled:active:text-opacity-90',
-        'focus:text-opacity-90',
-        'disabled:text-opacity-50',
+        'hover:text-white/90',
+        'enabled:active:text-white/90',
+        'focus:text-white/90',
+        'disabled:text-white/50',
       ],
       primary: [
         'text-sky-500 ring-sky-500',

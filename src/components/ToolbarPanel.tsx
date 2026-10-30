@@ -37,7 +37,7 @@ export function ToolbarPanel() {
             draggable
             data-test="create-table-button"
             className={clsx(
-              'flex cursor-pointer items-center gap-x-2 rounded pr-1 text-sm text-slate-600 outline-offset-2 outline-sky-500',
+              'flex cursor-pointer items-center gap-x-2 rounded-sm pr-1 text-sm text-slate-600 outline-offset-2 outline-sky-500',
               'hover:bg-gray-100',
             )}
           >

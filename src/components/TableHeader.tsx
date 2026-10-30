@@ -222,7 +222,7 @@ export function TableHeader({ table }: TableHeaderProps) {
           }
         }}
         data-test="table-header"
-        className="group -mx-3 rounded px-3 pt-4 font-medium outline-none"
+        className="group -mx-3 rounded-sm px-3 pt-4 font-medium outline-hidden"
       >
         {isRenaming ? (
           <FocusLock>
@@ -245,8 +245,8 @@ export function TableHeader({ table }: TableHeaderProps) {
                   disabled={isSubmitting}
                   data-test="table-name-input"
                   className={clsx([
-                    'w-full rounded bg-slate-300 px-2 py-1 outline-2',
-                    'focus:outline',
+                    'w-full rounded-sm bg-slate-300 px-2 py-1',
+                    'focus:outline-2',
                     errors.name ? 'outline-red-400' : 'outline-sky-400',
                   ])}
                 />

@@ -5,7 +5,7 @@
   "trailingComma": "all",
   "arrowParens": "always",
   "semi": true,
-  "sortTailwindcss": { "config": "./tailwind.config.ts" },
+  "sortTailwindcss": { "stylesheet": "./src/index.css" },
   "ignorePatterns": [
     "pnpm-lock.yaml",
     ".agents/**",

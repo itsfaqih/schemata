@@ -1,6 +1,74 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+/* Layered so utilities override React Flow's defaults, as they did when v3 emitted them after it. */
+@import '@xyflow/react/dist/style.css' layer(components);
+
+@plugin '@tailwindcss/forms' {
+  strategy: 'class';
+}
+
+@theme {
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* v3's sRGB palette; v4's oklch values visibly shift these hues. */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+  --color-red-950: #450a0a;
+  --color-yellow-50: #fefce8;
+  --color-yellow-100: #fef9c3;
+  --color-yellow-200: #fef08a;
+  --color-yellow-300: #fde047;
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+  --color-yellow-600: #ca8a04;
+  --color-yellow-700: #a16207;
+  --color-yellow-800: #854d0e;
+  --color-yellow-900: #713f12;
+  --color-yellow-950: #422006;
+  --color-sky-50: #f0f9ff;
+  --color-sky-100: #e0f2fe;
+  --color-sky-200: #bae6fd;
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-sky-600: #0284c7;
+  --color-sky-700: #0369a1;
+  --color-sky-800: #075985;
+  --color-sky-900: #0c4a6e;
+  --color-sky-950: #082f49;
+}
 
 @layer base {
   button,
@@ -10,63 +78,63 @@
 }
 
 .react-select-container {
-  @apply w-full text-sm !important;
+  @apply w-full! text-sm!;
 }
 
 .react-select\_\_option--is-focused {
-  @apply bg-slate-100 !important;
+  @apply bg-slate-100!;
 }
 
 .react-select\_\_option--is-focused.react-select\_\_option--is-selected {
-  @apply bg-sky-600 !important;
+  @apply bg-sky-600!;
 }
 
 .react-select\_\_option--is-selected {
-  @apply bg-sky-500 !important;
+  @apply bg-sky-500!;
 }
 
 .react-select\_\_control {
-  @apply rounded-md border-slate-300 py-0.5 text-base shadow-sm !important;
+  @apply rounded-md! border-slate-300! py-0.5! text-base! shadow-xs!;
 }
 
 .react-select\_\_control.react-select\_\_control--is-focused {
-  @apply border-sky-400 !important;
+  @apply border-sky-400!;
 }
 
 .react-select\_\_control--is-focused {
-  @apply border-sky-500 ring-1 ring-sky-500 !important;
+  @apply border-sky-500! ring-1! ring-sky-500!;
 }
 
 .react-select\_\_control--is-focused:hover {
-  @apply border-sky-400 !important;
+  @apply border-sky-400!;
 }
 
 .react-select\_\_indicator-separator {
-  @apply w-0 !important;
+  @apply w-0!;
 }
 
 .react-select\_\_value-container {
-  @apply px-3 !important;
+  @apply px-3!;
 }
 
 .react-select\_\_placeholder {
-  @apply mx-0 !important;
+  @apply mx-0!;
 }
 
 .react-select\_\_input:focus {
-  @apply ring-0 !important;
+  @apply ring-0!;
 }
 
 .react-select\_\_multi-value {
-  @apply overflow-hidden rounded-md bg-slate-200 text-slate-700 !important;
+  @apply overflow-hidden! rounded-md! bg-slate-200! text-slate-700!;
 }
 
 .react-select\_\_multi-value\_\_label {
-  @apply text-sm !important;
+  @apply text-sm!;
 }
 
 .react-select\_\_multi-value\_\_remove:hover {
-  @apply bg-red-100 text-red-600 !important;
+  @apply bg-red-100! text-red-600!;
 }
 
 .react-flow__node {

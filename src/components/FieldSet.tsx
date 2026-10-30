@@ -9,8 +9,8 @@ type FieldSetProps = {
 
 export function FieldSet({ label, children, className }: FieldSetProps) {
   return (
-    <fieldset className={clsx('rounded border border-gray-200 px-4 pt-2 pb-4', className)}>
-      <legend className="text-sm font-medium uppercase tracking-wider text-slate-400">
+    <fieldset className={clsx('rounded-sm border border-gray-200 px-4 pt-2 pb-4', className)}>
+      <legend className="text-sm font-medium tracking-wider text-slate-400 uppercase">
         {label}
       </legend>
       {children}

@@ -17,7 +17,7 @@ export function Tooltip({ text, children, disabled = false }: TooltipProps) {
           <BaseTooltip.Popup
             role="tooltip"
             className={clsx(
-              'rounded border border-gray-700 bg-gray-900 py-2.5 px-3 text-xs text-white shadow-sm duration-500',
+              'rounded-sm border border-gray-700 bg-gray-900 py-2.5 px-3 text-xs text-white shadow-xs',
               '[&[data-open]:not([data-instant])]:animate-in [&[data-open]:not([data-instant])]:zoom-in-95',
             )}
           >

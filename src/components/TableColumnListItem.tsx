@@ -54,7 +54,7 @@ export function TableColumnListItem({
         position={Position.Right}
         type="source"
         className={clsx(
-          'peer absolute -right-[0.3125rem] z-20 h-2.5 w-2.5 border-2 border-sky-400 bg-white opacity-0',
+          'peer absolute -right-1.25 z-20 h-2.5 w-2.5 border-2 border-sky-400 bg-white opacity-0',
           {
             'group-hover:opacity-100': !connectionNodeId || !isTarget,
           },
@@ -65,7 +65,7 @@ export function TableColumnListItem({
         position={Position.Left}
         type="source"
         className={clsx(
-          'peer absolute -left-[0.3125rem] z-20 h-2.5 w-2.5 border-2 border-sky-400 bg-white opacity-0',
+          'peer absolute -left-1.25 z-20 h-2.5 w-2.5 border-2 border-sky-400 bg-white opacity-0',
           {
             'group-hover:opacity-100': !connectionNodeId || !isTarget,
           },

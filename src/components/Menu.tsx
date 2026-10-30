@@ -12,7 +12,7 @@ function MenuContent(
     <div
       ref={ref}
       className={clsx(
-        'min-w-[14rem] overflow-hidden rounded-lg border border-gray-300/50 bg-white/40 shadow-xl backdrop-blur',
+        'min-w-56 overflow-hidden rounded-lg border border-gray-300/50 bg-white/40 shadow-xl backdrop-blur-sm',
         className,
       )}
       {...props}
@@ -35,8 +35,8 @@ function MenuItem(
     <div
       ref={ref}
       className={clsx(
-        'flex w-full cursor-default items-center py-2 px-2.5 text-left backdrop-blur',
-        'hover:bg-gray-100/60 data-[disabled]:opacity-50',
+        'flex w-full cursor-default items-center py-2 px-2.5 text-left backdrop-blur-sm',
+        'hover:bg-gray-100/60 data-disabled:opacity-50',
         className,
       )}
       {...props}

@@ -81,7 +81,7 @@ export function CreateRelationDialog() {
         }
       }}
     >
-      <div className="pb-2 pt-4">
+      <div className="pt-4 pb-2">
         <form onSubmit={onSubmit} className="flex flex-col gap-y-4">
           <div className="flex gap-x-4">
             <FieldSet label="Source" className="w-64">
@@ -186,7 +186,7 @@ export function CreateRelationDialog() {
               </div>
             </FieldSet>
           </div>
-          <div className="rounded border border-gray-200 p-4">
+          <div className="rounded-sm border border-gray-200 p-4">
             <Checkbox
               label="Advanced settings"
               name="as"

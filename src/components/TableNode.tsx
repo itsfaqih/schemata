@@ -29,8 +29,8 @@ export function TableNode({ id, data: table }: NodeProps<TableNodeType>) {
       onBlur={() => setIsFocused(false)}
       data-test="table-node"
       className={clsx(
-        'group/node min-w-[20rem] rounded-md bg-slate-200 px-3 pb-4 shadow-sm ring-1 ring-slate-200 ring-offset-2',
-        'outline-2 outline-offset-2 outline-sky-500 [&:has([id*=table-header-]:focus)]:outline',
+        'group/node min-w-[20rem] rounded-md bg-slate-200 px-3 pb-4 shadow-xs ring-1 ring-slate-200 ring-offset-2',
+        'outline-offset-2 outline-sky-500 [&:has([id*=table-header-]:focus)]:outline-2',
       )}
     >
       <TableHeader table={{ id, ...table }} />
@@ -67,16 +67,16 @@ export function TableNode({ id, data: table }: NodeProps<TableNodeType>) {
           }}
           data-test="create-column-button"
           className={clsx(
-            'nodrag hidden w-full rounded-b bg-white py-3 px-4 text-left text-sm font-semibold text-sky-600 outline-2 outline-sky-500',
+            'nodrag hidden w-full rounded-b bg-white py-3 px-4 text-left text-sm font-semibold text-sky-600 outline-sky-500',
             'hover:bg-slate-100',
             'group-hover/node:flex',
             'group-focus-within/node:flex',
-            'focus:relative focus:z-10 focus:rounded-t focus:outline',
+            'focus:relative focus:z-10 focus:rounded-t focus:outline-2',
             'enabled:active:bg-slate-100',
             { 'rounded-t': table.columns.length === 0 },
           )}
         >
-          <span className="flex items-center gap-x-2 text-sm uppercase tracking-wide">
+          <span className="flex items-center gap-x-2 text-sm tracking-wide uppercase">
             <PlusIcon aria-hidden className="h-5 w-5" />
             Add field
           </span>

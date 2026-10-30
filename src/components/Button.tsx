@@ -3,13 +3,16 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { ButtonHTMLAttributes, forwardRef, ReactNode, Ref } from 'react';
 
 const buttonClass = cva(
-  ['rounded h-7 px-3.5 outline-offset-4 outline-sky-400 border font-medium', 'disabled:opacity-50'],
+  [
+    'rounded-sm h-7 px-3.5 outline-offset-4 outline-sky-400 border font-medium',
+    'disabled:opacity-50',
+  ],
   {
     variants: {
       variant: {
         default: ['bg-white border-transparent text-slate-600', 'enabled:hover:bg-gray-100'],
         outline: [
-          'bg-white border-slate-200 shadow-sm text-slate-600',
+          'bg-white border-slate-200 shadow-xs text-slate-600',
           'enabled:hover:bg-gray-100',
         ],
         primary: ['border-sky-600 bg-sky-600 text-white', 'enabled:hover:bg-sky-700'],

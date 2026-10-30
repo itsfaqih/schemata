@@ -89,7 +89,7 @@ export function SimpleFloatingEdge({
         markerStart={markerStart}
         markerEnd={markerEnd}
         style={style}
-        className="fill-none stroke-slate-400 stroke-[1.5] outline-none focus:stroke-sky-500"
+        className="fill-none stroke-slate-400 stroke-[1.5] outline-hidden focus:stroke-sky-500"
       />
       <path
         d={edgePath}
@@ -98,7 +98,7 @@ export function SimpleFloatingEdge({
 
           if (edge instanceof SVGElement) edge.focus();
         }}
-        className="peer fill-none stroke-transparent stroke-[20] outline-none"
+        className="peer fill-none stroke-transparent stroke-20 outline-hidden"
       />
       <foreignObject
         width={foreignObjectSize}
@@ -106,7 +106,7 @@ export function SimpleFloatingEdge({
         x={labelX - foreignObjectSize / 2}
         y={labelY - foreignObjectSize / 2}
         requiredExtensions="http://www.w3.org/1999/xhtml"
-        className="invisible flex items-center justify-center focus-within:visible hover:visible peer-hover:visible peer-focus:visible"
+        className="invisible flex items-center justify-center peer-hover:visible peer-focus:visible focus-within:visible hover:visible"
       >
         <DropdownMenu
           trigger={
