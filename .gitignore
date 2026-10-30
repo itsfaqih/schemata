@@ -35,3 +35,8 @@ reports
 
 # Pull request evidence (docs/pull-requests.md)
 .pr
+
+# Playwright
+playwright-report/
+test-results/
+e2e-artifacts/
