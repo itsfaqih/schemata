@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/mini';
 
 export const IndexSchema = z.object({
   id: z.uuid(),
@@ -18,17 +18,22 @@ export const BaseColumnAttributeEnum = z.union([VisibilityAttribute, Nullability
 
 export const BaseColumnSchema = z.object({
   id: z.uuid(),
-  name: z.string().trim().max(64, { error: 'String must contain at most 64 character(s)' }),
-  default: z.string().optional(),
-  index: z.number().int(),
+  name: z
+    .string()
+    .check(z.trim(), z.maxLength(64, { error: 'String must contain at most 64 character(s)' })),
+  default: z.optional(z.string()),
+  index: z.number().check(z.int()),
 });
 
-export const BaseCreateColumnSchema = BaseColumnSchema.omit({ id: true, index: true }).extend({
-  index: z.number().int().optional(),
-  tableId: z.uuid(),
-});
+export const BaseCreateColumnSchema = z.extend(
+  z.omit(BaseColumnSchema, { id: true, index: true }),
+  {
+    index: z.optional(z.number().check(z.int())),
+    tableId: z.uuid(),
+  },
+);
 
-export const BaseUpdateColumnSchema = BaseColumnSchema.extend({
+export const BaseUpdateColumnSchema = z.extend(BaseColumnSchema, {
   isPrimaryKey: z.boolean(),
   isUniqueIndex: z.boolean(),
   tableId: z.uuid(),

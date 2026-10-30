@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import { BigIntColumnSchema } from './bigint';
 import { BinaryColumnSchema } from './binary';
 import { BitColumnSchema } from './bit';

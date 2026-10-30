@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,18 +9,20 @@ import {
 
 export const BaseVarcharColumnSchema = z.object({
   type: z.literal('VARCHAR'),
-  length: z.number().int().min(1).max(65535).catch(255).optional(),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  length: z.optional(z.catch(z.number().check(z.int(), z.minimum(1), z.maximum(65535)), 255)),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const VarcharColumnSchema = BaseColumnSchema.extend(BaseVarcharColumnSchema.shape);
+export const VarcharColumnSchema = z.extend(BaseColumnSchema, BaseVarcharColumnSchema.shape);
 
 export type VarcharColumnType = z.infer<typeof VarcharColumnSchema>;
 
-export const CreateVarcharColumnSchema = BaseCreateColumnSchema.extend(
+export const CreateVarcharColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BaseVarcharColumnSchema.shape,
 );
 
-export const UpdateVarcharColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdateVarcharColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseVarcharColumnSchema.shape,
 );

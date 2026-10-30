@@ -43,10 +43,10 @@ import {
   ColumnTypeWithValuesEnum,
 } from '@/schemas/column';
 import { UpdateColumnType, UpdateColumnSchema } from '@/schemas/update-column';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 
 // RHF types `values` as any[]: it only exists on the ENUM and SET members of the column union
-const ColumnValuesSchema = z.string().array().optional();
+const ColumnValuesSchema = z.optional(z.array(z.string()));
 
 type TableColumnFinalProps = {
   column: ColumnType;
@@ -102,10 +102,12 @@ function TableColumnComponent(
     reset,
   } = useForm<UpdateColumnType>({
     resolver: zodResolver(
-      UpdateColumnSchema.refine(({ id, name }) => validateUniqueColumnName({ id, name, tableId }), {
-        error: 'Column name is already used',
-        path: ['name'],
-      }),
+      UpdateColumnSchema.check(
+        z.refine(({ id, name }) => validateUniqueColumnName({ id, name, tableId }), {
+          error: 'Column name is already used',
+          path: ['name'],
+        }),
+      ),
     ),
     defaultValues: { ...column, isPrimaryKey, isUniqueIndex, tableId },
   });

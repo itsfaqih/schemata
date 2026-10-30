@@ -1,5 +1,5 @@
 import { Edge } from '@xyflow/react';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import { ColumnType } from './column';
 
 export const RelationActionEnum = z.enum(['CASCADE', 'RESTRICT', 'SET_NULL', 'NO_ACTION']);
@@ -7,7 +7,7 @@ export const RelationActionEnum = z.enum(['CASCADE', 'RESTRICT', 'SET_NULL', 'NO
 export const RelationSchema = z.object({
   id: z.uuid(),
   // catch for backward compat
-  name: z.string().catch('fk'),
+  name: z.catch(z.string(), 'fk'),
   source: z.object({
     columnId: z.uuid(),
     tableId: z.uuid(),
@@ -17,20 +17,21 @@ export const RelationSchema = z.object({
     tableId: z.uuid(),
   }),
   // catch for backward compat
-  actions: z
-    .object({
+  actions: z.catch(
+    z.object({
       onDelete: RelationActionEnum,
       onUpdate: RelationActionEnum,
-    })
-    .catch({
+    }),
+    {
       onDelete: 'RESTRICT',
       onUpdate: 'RESTRICT',
-    }),
+    },
+  ),
 });
 
 export type RelationType = z.infer<typeof RelationSchema>;
 
-export const CreateRelationSchema = RelationSchema.omit({
+export const CreateRelationSchema = z.omit(RelationSchema, {
   id: true,
 });
 

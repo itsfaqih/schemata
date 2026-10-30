@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,11 +9,11 @@ import {
 
 export const BaseTimeColumnSchema = z.object({
   type: z.literal('TIME'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const TimeColumnSchema = BaseColumnSchema.extend(BaseTimeColumnSchema.shape);
+export const TimeColumnSchema = z.extend(BaseColumnSchema, BaseTimeColumnSchema.shape);
 
-export const CreateTimeColumnSchema = BaseCreateColumnSchema.extend(BaseTimeColumnSchema.shape);
+export const CreateTimeColumnSchema = z.extend(BaseCreateColumnSchema, BaseTimeColumnSchema.shape);
 
-export const UpdateTimeColumnSchema = BaseUpdateColumnSchema.extend(BaseTimeColumnSchema.shape);
+export const UpdateTimeColumnSchema = z.extend(BaseUpdateColumnSchema, BaseTimeColumnSchema.shape);

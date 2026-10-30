@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,15 +9,17 @@ import {
 
 export const BaseMultiPointColumnSchema = z.object({
   type: z.literal('MULTIPOINT'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const MultiPointColumnSchema = BaseColumnSchema.extend(BaseMultiPointColumnSchema.shape);
+export const MultiPointColumnSchema = z.extend(BaseColumnSchema, BaseMultiPointColumnSchema.shape);
 
-export const CreateMultiPointColumnSchema = BaseCreateColumnSchema.extend(
+export const CreateMultiPointColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BaseMultiPointColumnSchema.shape,
 );
 
-export const UpdateMultiPointColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdateMultiPointColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseMultiPointColumnSchema.shape,
 );

@@ -1,7 +1,14 @@
-import { z } from 'zod';
+import { en } from 'zod/locales';
+import { z } from 'zod/mini';
 
-export function uniqueArrayElement<T extends z.ZodType>(schema: z.ZodArray<T>) {
-  return schema.transform((elements) => Array.from(new Set(elements)));
+// zod/mini ships no locale, so issues would read "Invalid input"; keep the messages classic zod gave
+z.config(en());
+
+export function uniqueArrayElement<T extends z.core.SomeType>(schema: z.ZodMiniArray<T>) {
+  return z.pipe(
+    schema,
+    z.transform((elements: z.output<T>[]) => Array.from(new Set(elements))),
+  );
 }
 
 export function isUuid(data: string) {

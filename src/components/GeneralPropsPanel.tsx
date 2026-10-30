@@ -9,12 +9,13 @@ import { EditorPanelContainer } from './EditorPanelContainer';
 import { SchemaSchema, SchemaType } from '@/schemas/schema';
 import { Textbox } from './Textbox';
 import FocusLock from 'react-focus-lock';
+import { z } from 'zod/mini';
 
 type GeneralPropsPanelProps = {
   schema: SchemaType;
 };
 
-const RenameSchema = SchemaSchema.pick({ name: true });
+const RenameSchema = z.pick(SchemaSchema, { name: true });
 
 type RenameType = Pick<SchemaType, 'name'>;
 

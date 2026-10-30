@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,11 +9,11 @@ import {
 
 export const BaseBitColumnSchema = z.object({
   type: z.literal('BIT'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const BitColumnSchema = BaseColumnSchema.extend(BaseBitColumnSchema.shape);
+export const BitColumnSchema = z.extend(BaseColumnSchema, BaseBitColumnSchema.shape);
 
-export const CreateBitColumnSchema = BaseCreateColumnSchema.extend(BaseBitColumnSchema.shape);
+export const CreateBitColumnSchema = z.extend(BaseCreateColumnSchema, BaseBitColumnSchema.shape);
 
-export const UpdateBitColumnSchema = BaseUpdateColumnSchema.extend(BaseBitColumnSchema.shape);
+export const UpdateBitColumnSchema = z.extend(BaseUpdateColumnSchema, BaseBitColumnSchema.shape);

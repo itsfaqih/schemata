@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,15 +9,17 @@ import {
 
 export const BaseDecimalColumnSchema = z.object({
   type: z.literal('DECIMAL'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const DecimalColumnSchema = BaseColumnSchema.extend(BaseDecimalColumnSchema.shape);
+export const DecimalColumnSchema = z.extend(BaseColumnSchema, BaseDecimalColumnSchema.shape);
 
-export const CreateDecimalColumnSchema = BaseCreateColumnSchema.extend(
+export const CreateDecimalColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BaseDecimalColumnSchema.shape,
 );
 
-export const UpdateDecimalColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdateDecimalColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseDecimalColumnSchema.shape,
 );

@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,11 +9,11 @@ import {
 
 export const BaseJsonColumnSchema = z.object({
   type: z.literal('JSON'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const JsonColumnSchema = BaseColumnSchema.extend(BaseJsonColumnSchema.shape);
+export const JsonColumnSchema = z.extend(BaseColumnSchema, BaseJsonColumnSchema.shape);
 
-export const CreateJsonColumnSchema = BaseCreateColumnSchema.extend(BaseJsonColumnSchema.shape);
+export const CreateJsonColumnSchema = z.extend(BaseCreateColumnSchema, BaseJsonColumnSchema.shape);
 
-export const UpdateJsonColumnSchema = BaseUpdateColumnSchema.extend(BaseJsonColumnSchema.shape);
+export const UpdateJsonColumnSchema = z.extend(BaseUpdateColumnSchema, BaseJsonColumnSchema.shape);

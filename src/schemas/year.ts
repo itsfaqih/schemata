@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,11 +9,11 @@ import {
 
 export const BaseYearColumnSchema = z.object({
   type: z.literal('YEAR'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const YearColumnSchema = BaseColumnSchema.extend(BaseYearColumnSchema.shape);
+export const YearColumnSchema = z.extend(BaseColumnSchema, BaseYearColumnSchema.shape);
 
-export const CreateYearColumnSchema = BaseCreateColumnSchema.extend(BaseYearColumnSchema.shape);
+export const CreateYearColumnSchema = z.extend(BaseCreateColumnSchema, BaseYearColumnSchema.shape);
 
-export const UpdateYearColumnSchema = BaseUpdateColumnSchema.extend(BaseYearColumnSchema.shape);
+export const UpdateYearColumnSchema = z.extend(BaseUpdateColumnSchema, BaseYearColumnSchema.shape);

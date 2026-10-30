@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import { BaseColumnSchema } from './base';
 
-export const DeleteColumnSchema = BaseColumnSchema.pick({ id: true }).extend({
+export const DeleteColumnSchema = z.extend(z.pick(BaseColumnSchema, { id: true }), {
   tableId: z.uuid(),
 });
 

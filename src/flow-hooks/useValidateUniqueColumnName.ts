@@ -1,14 +1,14 @@
 import { BaseColumnSchema } from '@/schemas/base';
 import { TableNodeType } from '@/schemas/table';
 import { useReactFlow } from '@xyflow/react';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 
-export const ValidateUniqueColumnNameSchema = BaseColumnSchema.pick({
-  id: true,
-  name: true,
-}).extend({
-  tableId: z.uuid(),
-});
+export const ValidateUniqueColumnNameSchema = z.extend(
+  z.pick(BaseColumnSchema, { id: true, name: true }),
+  {
+    tableId: z.uuid(),
+  },
+);
 
 export type ValidateUniqueColumnNameType = z.infer<typeof ValidateUniqueColumnNameSchema>;
 

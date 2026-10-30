@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,15 +9,17 @@ import {
 
 export const BasePolygonColumnSchema = z.object({
   type: z.literal('POLYGON'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const PolygonColumnSchema = BaseColumnSchema.extend(BasePolygonColumnSchema.shape);
+export const PolygonColumnSchema = z.extend(BaseColumnSchema, BasePolygonColumnSchema.shape);
 
-export const CreatePolygonColumnSchema = BaseCreateColumnSchema.extend(
+export const CreatePolygonColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BasePolygonColumnSchema.shape,
 );
 
-export const UpdatePolygonColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdatePolygonColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BasePolygonColumnSchema.shape,
 );

@@ -1,8 +1,8 @@
 import { TableSchema, TableNodeType } from '@/schemas/table';
 import { useReactFlow } from '@xyflow/react';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 
-export const ValidateUniqueTableNameSchema = TableSchema.pick({ id: true, name: true });
+export const ValidateUniqueTableNameSchema = z.pick(TableSchema, { id: true, name: true });
 
 export type ValidateUniqueTableNameType = z.infer<typeof ValidateUniqueTableNameSchema>;
 

@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,12 +9,12 @@ import {
 
 export const BaseBlobColumnSchema = z.object({
   type: z.enum(['BLOB', 'TEXT']),
-  length: z.number().int().min(1).max(65536).catch(65536).optional(),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  length: z.optional(z.catch(z.number().check(z.int(), z.minimum(1), z.maximum(65536)), 65536)),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const BlobColumnSchema = BaseColumnSchema.extend(BaseBlobColumnSchema.shape);
+export const BlobColumnSchema = z.extend(BaseColumnSchema, BaseBlobColumnSchema.shape);
 
-export const CreateBlobColumnSchema = BaseCreateColumnSchema.extend(BaseBlobColumnSchema.shape);
+export const CreateBlobColumnSchema = z.extend(BaseCreateColumnSchema, BaseBlobColumnSchema.shape);
 
-export const UpdateBlobColumnSchema = BaseUpdateColumnSchema.extend(BaseBlobColumnSchema.shape);
+export const UpdateBlobColumnSchema = z.extend(BaseUpdateColumnSchema, BaseBlobColumnSchema.shape);

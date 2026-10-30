@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,16 +9,18 @@ import {
 
 export const BaseTinyIntColumnSchema = z.object({
   type: z.literal('TINYINT'),
-  length: z.number().int().min(1).max(4).catch(4).optional(),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  length: z.optional(z.catch(z.number().check(z.int(), z.minimum(1), z.maximum(4)), 4)),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const TinyIntColumnSchema = BaseColumnSchema.extend(BaseTinyIntColumnSchema.shape);
+export const TinyIntColumnSchema = z.extend(BaseColumnSchema, BaseTinyIntColumnSchema.shape);
 
-export const CreateTinyIntColumnSchema = BaseCreateColumnSchema.extend(
+export const CreateTinyIntColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BaseTinyIntColumnSchema.shape,
 );
 
-export const UpdateTinyIntColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdateTinyIntColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseTinyIntColumnSchema.shape,
 );

@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,12 +9,12 @@ import {
 
 export const BaseEnumColumnSchema = z.object({
   type: z.literal('ENUM'),
-  values: uniqueArrayElement(z.string().array().nonempty()),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  values: uniqueArrayElement(z.array(z.string()).check(z.minLength(1))),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const EnumColumnSchema = BaseColumnSchema.extend(BaseEnumColumnSchema.shape);
+export const EnumColumnSchema = z.extend(BaseColumnSchema, BaseEnumColumnSchema.shape);
 
-export const CreateEnumColumnSchema = BaseCreateColumnSchema.extend(BaseEnumColumnSchema.shape);
+export const CreateEnumColumnSchema = z.extend(BaseCreateColumnSchema, BaseEnumColumnSchema.shape);
 
-export const UpdateEnumColumnSchema = BaseUpdateColumnSchema.extend(BaseEnumColumnSchema.shape);
+export const UpdateEnumColumnSchema = z.extend(BaseUpdateColumnSchema, BaseEnumColumnSchema.shape);

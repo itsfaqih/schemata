@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,17 +9,20 @@ import {
 
 export const BaseMultiLineStringColumnSchema = z.object({
   type: z.literal('MULTILINESTRING'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const MultiLineStringColumnSchema = BaseColumnSchema.extend(
+export const MultiLineStringColumnSchema = z.extend(
+  BaseColumnSchema,
   BaseMultiLineStringColumnSchema.shape,
 );
 
-export const CreateMultiLineStringColumnSchema = BaseCreateColumnSchema.extend(
+export const CreateMultiLineStringColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BaseMultiLineStringColumnSchema.shape,
 );
 
-export const UpdateMultiLineStringColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdateMultiLineStringColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseMultiLineStringColumnSchema.shape,
 );

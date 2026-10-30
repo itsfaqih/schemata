@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,11 +9,17 @@ import {
 
 export const BaseFloatColumnSchema = z.object({
   type: z.literal('FLOAT'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const FloatColumnSchema = BaseColumnSchema.extend(BaseFloatColumnSchema.shape);
+export const FloatColumnSchema = z.extend(BaseColumnSchema, BaseFloatColumnSchema.shape);
 
-export const CreateFloatColumnSchema = BaseCreateColumnSchema.extend(BaseFloatColumnSchema.shape);
+export const CreateFloatColumnSchema = z.extend(
+  BaseCreateColumnSchema,
+  BaseFloatColumnSchema.shape,
+);
 
-export const UpdateFloatColumnSchema = BaseUpdateColumnSchema.extend(BaseFloatColumnSchema.shape);
+export const UpdateFloatColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
+  BaseFloatColumnSchema.shape,
+);

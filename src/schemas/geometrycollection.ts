@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,17 +9,20 @@ import {
 
 export const BaseGeometryCollectionColumnSchema = z.object({
   type: z.literal('GEOMETRYCOLLECTION'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const GeometryCollectionColumnSchema = BaseColumnSchema.extend(
+export const GeometryCollectionColumnSchema = z.extend(
+  BaseColumnSchema,
   BaseGeometryCollectionColumnSchema.shape,
 );
 
-export const CreateGeometryCollectionColumnSchema = BaseCreateColumnSchema.extend(
+export const CreateGeometryCollectionColumnSchema = z.extend(
+  BaseCreateColumnSchema,
   BaseGeometryCollectionColumnSchema.shape,
 );
 
-export const UpdateGeometryCollectionColumnSchema = BaseUpdateColumnSchema.extend(
+export const UpdateGeometryCollectionColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseGeometryCollectionColumnSchema.shape,
 );

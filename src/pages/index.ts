@@ -1,6 +1,6 @@
 import { base64UrlToSchema } from '@/utils/schema';
 import { createRootRoute, createRoute, createRouter, ErrorComponent } from '@tanstack/react-router';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import { Editor } from './Editor';
 
 const rootRoute = createRootRoute();
@@ -10,7 +10,7 @@ const editorRoute = createRoute({
   path: '/',
   component: Editor,
   validateSearch: z.object({
-    schema: z.string().optional(),
+    schema: z.optional(z.string()),
   }),
   loaderDeps: ({ search }) => ({ schema: search.schema }),
   loader: ({ deps }) => ({

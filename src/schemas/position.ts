@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import { z } from 'zod/mini';
 
 export const PositionSchema = z.object({
   itemId: z.uuid(),
-  groupId: z.uuid().optional(),
+  groupId: z.optional(z.uuid()),
   x: z.number(),
   y: z.number(),
 });

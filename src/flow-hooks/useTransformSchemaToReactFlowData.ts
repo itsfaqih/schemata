@@ -1,70 +1,73 @@
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import { useHandleEdgeMarker } from './useHandleEdgeMarker';
 import { TableNodeType } from '@/schemas/table';
 import { RelationEdgeType } from '@/schemas/relation';
-import { SchemaSchema } from '@/schemas/schema';
+import { SchemaSchema, SchemaType } from '@/schemas/schema';
 
 export function useTransformSchemaToReactFlowData() {
   const handleEdgeMarker = useHandleEdgeMarker();
 
-  return SchemaSchema.transform<{
-    nodes: TableNodeType[];
-    edges: RelationEdgeType[];
-  }>((schema, ctx) => {
-    const positionsMap = new Map(
-      schema.positions.map((position) => [position.itemId, { x: position.x, y: position.y }]),
-    );
+  return z.pipe(
+    SchemaSchema,
+    z.transform<SchemaType, { nodes: TableNodeType[]; edges: RelationEdgeType[] }>(
+      (schema, ctx) => {
+        const positionsMap = new Map(
+          schema.positions.map((position) => [position.itemId, { x: position.x, y: position.y }]),
+        );
 
-    const nodes: TableNodeType[] = schema.tables.map((table) => {
-      const { id, ...tablePayload } = table;
+        const nodes: TableNodeType[] = schema.tables.map((table) => {
+          const { id, ...tablePayload } = table;
 
-      const position = positionsMap.get(id);
+          const position = positionsMap.get(id);
 
-      if (!position) {
-        ctx.addIssue({
-          code: 'custom',
-          message: `Position for ${id} is not found`,
+          if (!position) {
+            ctx.issues.push({
+              code: 'custom',
+              message: `Position for ${id} is not found`,
+              input: schema,
+            });
+
+            return z.NEVER;
+          }
+
+          return {
+            id,
+            type: 'table',
+            data: {
+              name: tablePayload.name,
+              columns: tablePayload.columns,
+              indexes: tablePayload.indexes,
+            },
+            position,
+          };
         });
 
-        return z.NEVER;
-      }
+        const edges: RelationEdgeType[] =
+          schema.relations?.map((relation) => {
+            const edge = {
+              id: relation.id,
+              source: relation.source.tableId,
+              sourceHandle: `${relation.source.columnId}-source-right`,
+              target: relation.target.tableId,
+              targetHandle: `${relation.target.columnId}-target`,
+              data: {
+                name: relation.name,
+                sourceColumnId: relation.source.columnId,
+                targetColumnId: relation.target.columnId,
+                actions: relation.actions,
+              },
+            };
 
-      return {
-        id,
-        type: 'table',
-        data: {
-          name: tablePayload.name,
-          columns: tablePayload.columns,
-          indexes: tablePayload.indexes,
-        },
-        position,
-      };
-    });
+            const { markerEnd, markerStart } = handleEdgeMarker(edge);
 
-    const edges: RelationEdgeType[] =
-      schema.relations?.map((relation) => {
-        const edge = {
-          id: relation.id,
-          source: relation.source.tableId,
-          sourceHandle: `${relation.source.columnId}-source-right`,
-          target: relation.target.tableId,
-          targetHandle: `${relation.target.columnId}-target`,
-          data: {
-            name: relation.name,
-            sourceColumnId: relation.source.columnId,
-            targetColumnId: relation.target.columnId,
-            actions: relation.actions,
-          },
+            return { ...edge, markerEnd, markerStart };
+          }) ?? [];
+
+        return {
+          nodes,
+          edges,
         };
-
-        const { markerEnd, markerStart } = handleEdgeMarker(edge);
-
-        return { ...edge, markerEnd, markerStart };
-      }) ?? [];
-
-    return {
-      nodes,
-      edges,
-    };
-  });
+      },
+    ),
+  );
 }

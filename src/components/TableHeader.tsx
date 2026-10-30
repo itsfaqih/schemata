@@ -10,6 +10,7 @@ import { emptyCreateVarcharColumn } from '@/utils/reactflow';
 import { handleFocusLockChildrenBlur } from '@/utils/focus-lock';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { useReactFlow } from '@xyflow/react';
+import { z } from 'zod/mini';
 import { ContextMenu } from './ContextMenu';
 import { useEditorActions } from '@/contexts/EditorStateContext';
 import {
@@ -46,10 +47,12 @@ export function TableHeader({ table }: TableHeaderProps) {
     setFocus,
   } = useForm<TableType>({
     resolver: zodResolver(
-      TableSchema.refine(({ id, name }) => validateUniqueTableName({ id, name }), {
-        error: 'Table name is already used',
-        path: ['name'],
-      }),
+      TableSchema.check(
+        z.refine(({ id, name }) => validateUniqueTableName({ id, name }), {
+          error: 'Table name is already used',
+          path: ['name'],
+        }),
+      ),
     ),
     defaultValues: table,
   });

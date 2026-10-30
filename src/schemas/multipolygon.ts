@@ -1,5 +1,5 @@
 import { uniqueArrayElement } from '@/utils/zod';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 import {
   BaseColumnAttributeEnum,
   BaseColumnSchema,
@@ -9,15 +9,20 @@ import {
 
 export const BaseMultiPolygonColumnSchema = z.object({
   type: z.literal('MULTIPOLYGON'),
-  attributes: uniqueArrayElement(BaseColumnAttributeEnum.array()),
+  attributes: uniqueArrayElement(z.array(BaseColumnAttributeEnum)),
 });
 
-export const MultiPolygonColumnSchema = BaseColumnSchema.extend(BaseMultiPolygonColumnSchema.shape);
-
-export const CreateMultiPolygonColumnSchema = BaseCreateColumnSchema.extend(
+export const MultiPolygonColumnSchema = z.extend(
+  BaseColumnSchema,
   BaseMultiPolygonColumnSchema.shape,
 );
 
-export const UpdateMultiPolygonColumnSchema = BaseUpdateColumnSchema.extend(
+export const CreateMultiPolygonColumnSchema = z.extend(
+  BaseCreateColumnSchema,
+  BaseMultiPolygonColumnSchema.shape,
+);
+
+export const UpdateMultiPolygonColumnSchema = z.extend(
+  BaseUpdateColumnSchema,
   BaseMultiPolygonColumnSchema.shape,
 );
