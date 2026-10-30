@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useEffectEvent,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -23,21 +24,26 @@ import { RelationEdgeType } from '@/schemas/relation';
 type ReactFlowDataType = { nodes: TableNodeType[]; edges: RelationEdgeType[] };
 
 type EditorState = {
-  copyPasteService: ActorRefFrom<typeof copyPasteMachine>;
   defaults: ReactFlowDataType;
   undoableService: {
-    data: ReactFlowDataType;
-    setData: (value: (currentData: ReactFlowDataType) => ReactFlowDataType) => void;
-    updateData: (forcePass?: boolean) => void;
     undo: () => void;
     redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
   };
-  createRelationDialogStore: CreateRelationDialogProps;
+  relationDialogSource: CreateRelationDialogProps['source'];
+};
+
+// Kept stable across edits, so the tables and columns that read it re-render only from their own data
+type EditorActions = {
+  copyPasteService: ActorRefFrom<typeof copyPasteMachine>;
+  updateData: (forcePass?: boolean) => void;
+  setRelationDialogSource: CreateRelationDialogProps['setSource'];
 };
 
 const EditorStateContext = createContext<EditorState | null>(null);
+
+const EditorActionsContext = createContext<EditorActions | null>(null);
 
 export function useEditorState(): EditorState {
   const editorState = useContext(EditorStateContext);
@@ -47,6 +53,16 @@ export function useEditorState(): EditorState {
   }
 
   return editorState;
+}
+
+export function useEditorActions(): EditorActions {
+  const editorActions = useContext(EditorActionsContext);
+
+  if (!editorActions) {
+    throw Error('useEditorActions must be used within EditorStateProvider');
+  }
+
+  return editorActions;
 }
 
 type EditorStateProviderProps = {
@@ -62,14 +78,11 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
   // Parsed once: later schema changes flow through the undoable state, not the defaults
   const [defaults] = useState(() => transformSchemaToReactFlowData.parse(schema));
 
-  const [
-    reactFlowData,
-    setReactFlowData,
-    { undo, redo, canUndo, canRedo, past: pasts, future: futures },
-  ] = useUndoable({
-    nodes: defaults.nodes,
-    edges: defaults.edges,
-  });
+  const [, setReactFlowData, { undo, redo, canUndo, canRedo, past: pasts, future: futures }] =
+    useUndoable({
+      nodes: defaults.nodes,
+      edges: defaults.edges,
+    });
 
   const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
   const handleSaveSchema = useHandleSaveLocalSchema(schema.id);
@@ -78,11 +91,6 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
   // render, so the canvas is read in a passive effect once that render committed
   const forcePassRequested = useRef(false);
   const [updateRequests, requestUpdate] = useReducer((count: number) => count + 1, 0);
-
-  const updateData = (forcePass = false) => {
-    forcePassRequested.current ||= forcePass;
-    requestUpdate();
-  };
 
   const recordCanvas = useEffectEvent(() => {
     const forcePass = forcePassRequested.current;
@@ -149,35 +157,37 @@ export function EditorStateProvider({ schema, children }: EditorStateProviderPro
     reactFlowInstance.setEdges(future.edges);
   };
 
-  const [createRelationDialogState, setCreateRelationDialogState] = useState<{
-    source: CreateRelationDialogProps['source'];
-  }>({
-    source: null,
-  });
+  const [relationDialogSource, setRelationDialogSource] =
+    useState<CreateRelationDialogProps['source']>(null);
+
+  const actions = useMemo<EditorActions>(
+    () => ({
+      copyPasteService,
+      updateData(forcePass = false) {
+        forcePassRequested.current ||= forcePass;
+        requestUpdate();
+      },
+      setRelationDialogSource,
+    }),
+    [copyPasteService],
+  );
 
   return (
-    <EditorStateContext.Provider
-      value={{
-        copyPasteService,
-        defaults,
-        undoableService: {
-          data: reactFlowData,
-          setData: setReactFlowData,
-          updateData,
-          undo: handleUndo,
-          redo: handleRedo,
-          canUndo,
-          canRedo,
-        },
-        createRelationDialogStore: {
-          source: createRelationDialogState.source,
-          setSource(source: CreateRelationDialogProps['source']) {
-            setCreateRelationDialogState((currentState) => ({ ...currentState, source }));
+    <EditorActionsContext.Provider value={actions}>
+      <EditorStateContext.Provider
+        value={{
+          defaults,
+          undoableService: {
+            undo: handleUndo,
+            redo: handleRedo,
+            canUndo,
+            canRedo,
           },
-        },
-      }}
-    >
-      {children}
-    </EditorStateContext.Provider>
+          relationDialogSource,
+        }}
+      >
+        {children}
+      </EditorStateContext.Provider>
+    </EditorActionsContext.Provider>
   );
 }

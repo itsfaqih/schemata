@@ -1,10 +1,10 @@
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { CreateColumnType, CreateColumnSchema } from '@/schemas/create-column';
 import { TableNodeType } from '@/schemas/table';
 import { useReactFlow } from '@xyflow/react';
 
 export function useCreateColumn() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (columnPayload: CreateColumnType) => {
@@ -36,7 +36,7 @@ export function useCreateColumn() {
     });
 
     if (newColumn.name !== '') {
-      undoableService.updateData(true);
+      updateData(true);
     }
   };
 }

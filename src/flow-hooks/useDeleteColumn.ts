@@ -1,11 +1,11 @@
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { DeleteColumnType } from '@/schemas/delete-column';
 import { TableNodeType } from '@/schemas/table';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
 import { useReactFlow } from '@xyflow/react';
 
 export function useDeleteColumn() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (columnPayload: DeleteColumnType) => {
@@ -38,6 +38,6 @@ export function useDeleteColumn() {
       });
     });
 
-    undoableService.updateData(true);
+    updateData(true);
   };
 }

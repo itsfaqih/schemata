@@ -1,4 +1,4 @@
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { useReactFlow } from '@xyflow/react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ColumnType } from '@/schemas/column';
@@ -11,7 +11,7 @@ type ReorderColumnType = {
 };
 
 export function useReorderColumn() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (reorderPayload: ReorderColumnType) => {
@@ -43,6 +43,6 @@ export function useReorderColumn() {
       });
     });
 
-    undoableService.updateData(true);
+    updateData(true);
   };
 }

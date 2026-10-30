@@ -1,4 +1,4 @@
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { IndexType } from '@/schemas/base';
 import { TableNodeType } from '@/schemas/table';
 import { UpdateColumnType } from '@/schemas/update-column';
@@ -7,7 +7,7 @@ import { Node, useReactFlow } from '@xyflow/react';
 import { useHandleEdgeMarker } from './useHandleEdgeMarker';
 
 export function useUpdateColumn() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType>();
   const handleEdgeMarker = useHandleEdgeMarker();
 
@@ -134,6 +134,6 @@ export function useUpdateColumn() {
       });
     }
 
-    undoableService.updateData(true);
+    updateData(true);
   };
 }

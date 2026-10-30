@@ -1,4 +1,4 @@
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions, useEditorState } from '@/contexts/EditorStateContext';
 import { CreateRelationSchema, CreateRelationType, RelationActionEnum } from '@/schemas/relation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
@@ -23,9 +23,8 @@ export type CreateRelationDialogProps = {
 };
 
 export function CreateRelationDialog() {
-  const {
-    createRelationDialogStore: { source, setSource },
-  } = useEditorState();
+  const { relationDialogSource: source } = useEditorState();
+  const { setRelationDialogSource: setSource } = useEditorActions();
 
   const { data: schema } = useLocalSchemaQuery();
 

@@ -1,10 +1,10 @@
 import { useReactFlow } from '@xyflow/react';
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { TableNodeType } from '@/schemas/table';
 import { RelationType, RelationEdgeType } from '@/schemas/relation';
 
 export function useReverseRelation() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
 
   return (relationId: RelationType['id']) => {
@@ -38,6 +38,6 @@ export function useReverseRelation() {
       });
     });
 
-    undoableService.updateData(true);
+    updateData(true);
   };
 }

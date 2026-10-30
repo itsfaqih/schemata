@@ -13,7 +13,7 @@ import { Markers } from './Markers';
 import { useHandleCreateTableOnDrop } from '@/flow-hooks/useHandleCreateTableOnDrop';
 import { emptyTableWithoutId, getColumnIdFromHandleId } from '@/utils/reactflow';
 import { ContextMenu } from './ContextMenu';
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions, useEditorState } from '@/contexts/EditorStateContext';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { UtilsPanel } from './UtilsPanel';
 import { AddTableIcon } from './Icon/AddTableIcon';
@@ -35,7 +35,8 @@ type CanvasProps = {
 export function Canvas({ schema }: CanvasProps) {
   const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
 
-  const { copyPasteService, defaults, undoableService } = useEditorState();
+  const { defaults, undoableService } = useEditorState();
+  const { copyPasteService, updateData } = useEditorActions();
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event) => {
     event.preventDefault();
@@ -153,9 +154,9 @@ export function Canvas({ schema }: CanvasProps) {
           onDrop={onDrop}
           elevateEdgesOnSelect
           defaultEdgeOptions={{ type: 'floating' }}
-          onNodesDelete={() => undoableService.updateData(true)}
-          onEdgesDelete={() => undoableService.updateData(true)}
-          onNodeDragStop={() => undoableService.updateData(true)}
+          onNodesDelete={() => updateData(true)}
+          onEdgesDelete={() => updateData(true)}
+          onNodeDragStop={() => updateData(true)}
           onConnect={() => {
             const edges =
               reactFlowInstance.getEdges().map((edge) => {
@@ -200,7 +201,7 @@ export function Canvas({ schema }: CanvasProps) {
             reactFlowInstance.setEdges(edges);
           }}
           onConnectEnd={() => {
-            undoableService.updateData(true);
+            updateData(true);
           }}
           onPaneMouseMove={(e) => {
             cursorPositionRef.current = { x: e.clientX, y: e.clientY };

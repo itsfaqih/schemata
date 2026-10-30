@@ -1,11 +1,11 @@
 import { useReactFlow } from '@xyflow/react';
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { useHandleEdgeMarker } from './useHandleEdgeMarker';
 import { TableNodeType } from '@/schemas/table';
 import { CreateRelationType, RelationEdgeType } from '@/schemas/relation';
 
 export function useCreateRelation() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType, RelationEdgeType>();
   const handleEdgeMarker = useHandleEdgeMarker();
 
@@ -32,6 +32,6 @@ export function useCreateRelation() {
       markerStart,
     });
 
-    undoableService.updateData(true);
+    updateData(true);
   };
 }

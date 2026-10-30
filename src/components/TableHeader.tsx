@@ -11,7 +11,7 @@ import { handleFocusLockChildrenBlur } from '@/utils/focus-lock';
 import { useCreateTable } from '@/flow-hooks/useCreateTable';
 import { useReactFlow } from '@xyflow/react';
 import { ContextMenu } from './ContextMenu';
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import {
   ClipboardDocumentIcon,
   PencilSquareIcon,
@@ -27,7 +27,7 @@ type TableHeaderProps = {
 };
 
 export function TableHeader({ table }: TableHeaderProps) {
-  const { copyPasteService, undoableService } = useEditorState();
+  const { copyPasteService, updateData } = useEditorActions();
 
   const reactFlowInstance = useReactFlow();
   const createTable = useCreateTable();
@@ -93,7 +93,7 @@ export function TableHeader({ table }: TableHeaderProps) {
       position,
     );
 
-    undoableService.updateData();
+    updateData();
   };
 
   const triggerCopy = useCallback(() => {

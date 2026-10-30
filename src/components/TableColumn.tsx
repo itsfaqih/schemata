@@ -35,7 +35,7 @@ import {
 import { Tooltip } from './Tooltip';
 import { CreatableCombobox, isMultiValue } from './CreatableCombobox';
 import { DotsSixVerticalIcon, FlowArrowIcon } from '@phosphor-icons/react';
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import {
   ColumnType,
   ColumnTypeEnum,
@@ -175,10 +175,10 @@ function TableColumnComponent(
     createColumn({ ...column, tableId });
   };
 
-  const { createRelationDialogStore } = useEditorState();
+  const { setRelationDialogSource } = useEditorActions();
 
   const triggerAddRelation = () => {
-    createRelationDialogStore.setSource({ columnId: column.id, tableId });
+    setRelationDialogSource({ columnId: column.id, tableId });
   };
 
   return (

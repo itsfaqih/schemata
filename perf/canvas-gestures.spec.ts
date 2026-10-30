@@ -15,6 +15,12 @@ const hoverBudgetMs = 250;
 // moving it alone stays under 300 ms
 const dragBudgetMs = 450;
 
+const renames = 5;
+
+// Renaming a table records the canvas for undo and saves it. When that re-renders every table and column, 5 renames
+// cost about 3.7 s here; when only the renamed table re-renders, about 550 ms
+const renameBudgetMs = 1000;
+
 function largeSchema(): string {
   const tables = Array.from({ length: tableCount }, (_table, tableIndex) => ({
     id: randomUUID(),
@@ -160,4 +166,37 @@ test(`dragging a table on a ${tableCount}-table canvas stays within ${dragBudget
     before.x + 200,
   );
   expect(dragMs, 'script time while dragging a table').toBeLessThan(dragBudgetMs);
+});
+
+test(`renaming ${renames} tables on a ${tableCount}-table canvas stays within ${renameBudgetMs}ms of script`, async ({
+  page,
+}) => {
+  const cdp = await openLargeSchema(page);
+
+  if (!cdp) return;
+
+  let renameMs = 0;
+
+  for (let rename = 0; rename < renames; rename += 1) {
+    const header = page.locator('[data-test="table-header"]').nth(rename);
+    const nameInput = header.getByRole('textbox');
+
+    await header.press('e');
+    await nameInput.fill(`renamed_${rename}`);
+
+    const before = await scriptMs(cdp);
+
+    await nameInput.press('Enter');
+    await expect(header).toHaveText(`renamed_${rename}`);
+    await nextFrame(page);
+    await nextFrame(page);
+
+    renameMs += (await scriptMs(cdp)) - before;
+  }
+
+  console.log(`${renames} renames over ${tableCount} tables at 4x CPU`, {
+    renameMs: Math.round(renameMs),
+  });
+
+  expect(renameMs, 'script time while renaming tables').toBeLessThan(renameBudgetMs);
 });

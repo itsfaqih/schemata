@@ -1,9 +1,9 @@
-import { useEditorState } from '@/contexts/EditorStateContext';
+import { useEditorActions } from '@/contexts/EditorStateContext';
 import { TableType, TableNodeType } from '@/schemas/table';
 import { useReactFlow } from '@xyflow/react';
 
 export function useUpdateTable() {
-  const { undoableService } = useEditorState();
+  const { updateData } = useEditorActions();
   const reactFlowInstance = useReactFlow<TableNodeType>();
 
   return (newTable: TableType) => {
@@ -25,6 +25,6 @@ export function useUpdateTable() {
       }),
     );
 
-    undoableService.updateData(true);
+    updateData(true);
   };
 }
