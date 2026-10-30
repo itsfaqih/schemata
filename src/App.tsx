@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router()} />
+      <RouterProvider router={router} />
       <Toaster />
       <ReactQueryDevtools buttonPosition="bottom-right" />
     </QueryClientProvider>

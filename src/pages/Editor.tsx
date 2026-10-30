@@ -2,24 +2,18 @@ import { Canvas } from '@/components/Canvas';
 import { CreateRelationDialog } from '@/components/CreateRelationDialog';
 import { EditorStateProvider } from '@/contexts/EditorStateContext';
 import { useLocalSchemaQuery } from '@/queries/useSchemaQuery';
-import { SchemaSchema } from '@/schemas/schema';
 import { emptySchemaFactory } from '@/utils/schema';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMatch } from '@tanstack/react-router';
+import { useLoaderData } from '@tanstack/react-router';
 import localforage from 'localforage';
 import { useEffect, useRef } from 'react';
 import { ReactFlowProvider } from 'reactflow';
-import { z } from 'zod';
 
 const starterSchema = emptySchemaFactory();
 
-const LoaderDataSchema = z.object({ schema: SchemaSchema.nullable() });
-
 export function Editor() {
   const queryClient = useQueryClient();
-  const match = useMatch('/');
-
-  const initialSchema = LoaderDataSchema.parse(match.loaderData).schema ?? starterSchema;
+  const initialSchema = useLoaderData({ from: '/' }).schema ?? starterSchema;
   const mountedSchemaRef = useRef(initialSchema);
 
   const { data: schema, isPending, isSuccess } = useLocalSchemaQuery(initialSchema.id);

@@ -1,34 +1,30 @@
-import { SchemaType } from '@/schemas/schema';
 import { base64UrlToSchema } from '@/utils/schema';
-import { createRouteConfig, createReactRouter } from '@tanstack/react-router';
+import { createRootRoute, createRoute, createRouter, ErrorComponent } from '@tanstack/react-router';
 import { z } from 'zod';
 import { Editor } from './Editor';
 
-export const rootRoute = createRouteConfig();
+const rootRoute = createRootRoute();
 
-function routeConfig() {
-  return rootRoute.addChildren([
-    rootRoute.createRoute({
-      path: '/',
-      component: Editor,
-      async loader({ search }) {
-        const { schema: base64Schema } = search;
+const editorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: Editor,
+  validateSearch: z.object({
+    schema: z.string().optional(),
+  }),
+  loaderDeps: ({ search }) => ({ schema: search.schema }),
+  loader: ({ deps }) => ({
+    schema: deps.schema ? base64UrlToSchema(deps.schema) : null,
+  }),
+  errorComponent: ErrorComponent,
+});
 
-        const schema: SchemaType | null = base64Schema ? base64UrlToSchema(base64Schema) : null;
+export const router = createRouter({
+  routeTree: rootRoute.addChildren([editorRoute]),
+});
 
-        return {
-          schema,
-        };
-      },
-      validateSearch: z.object({
-        schema: z.string().optional(),
-      }),
-    }),
-  ]);
-}
-
-export function router() {
-  return createReactRouter({
-    routeConfig: routeConfig(),
-  });
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
 }

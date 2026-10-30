@@ -89,7 +89,6 @@ function ShareLinkButton({ schema }: ShareLinkButtonProps) {
     void copy(url);
 
     void router.navigate({
-      params: '',
       to: '/',
       search: { schema: encodedDatabase },
       replace: true,
