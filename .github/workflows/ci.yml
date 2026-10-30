@@ -30,6 +30,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-artifacts
-          path: e2e-artifacts/
+          path: |
+            e2e-artifacts/
+            playwright-report/
           if-no-files-found: ignore
           retention-days: 14

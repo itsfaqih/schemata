@@ -1,5 +1,4 @@
-import { spawn } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import path from 'node:path';
 
@@ -47,8 +46,15 @@ async function waitForApp(url: string): Promise<void> {
 }
 
 export default async function globalSetup(): Promise<() => Promise<void>> {
-  if (!existsSync(path.join(rootDir, 'dist', 'index.html'))) {
-    throw new Error('dist/ is missing: run `vp run test:e2e`, which builds the app first');
+  const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js');
+
+  const build = spawnSync(process.execPath, [viteBin, 'build', '--logLevel', 'warn'], {
+    cwd: rootDir,
+    stdio: 'inherit',
+  });
+
+  if (build.status !== 0) {
+    throw new Error(`vite build exited with ${String(build.status)}`);
   }
 
   const port = await findFreePort();
@@ -56,15 +62,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
 
   const app = spawn(
     process.execPath,
-    [
-      path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js'),
-      'preview',
-      '--port',
-      String(port),
-      '--strictPort',
-      '--host',
-      '127.0.0.1',
-    ],
+    [viteBin, 'preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'],
     { cwd: rootDir, stdio: ['ignore', 'ignore', 'inherit'] },
   );
 

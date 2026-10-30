@@ -199,6 +199,8 @@ export function TableHeader({ table }: TableHeaderProps) {
               e.stopPropagation();
               triggerDelete();
             } else if (e.shiftKey && e.key === 'Enter') {
+              e.preventDefault();
+              e.stopPropagation();
               triggerCreateColumn();
             } else if (e.key === 'Escape') {
               e.preventDefault();

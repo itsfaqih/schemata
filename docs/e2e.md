@@ -4,10 +4,10 @@ The suite drives the built app in a real browser through every user **flow**, an
 
 ## Two run modes
 
-| Mode | Command | Use |
-| --- | --- | --- |
+| Mode               | Command                       | Use                                                                                                   |
+| ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
 | **On-demand flow** | `test:e2e:flow "<flow name>"` | A change confined to one flow: verify that flow and capture its screenshots, without running the rest |
-| **Full suite** | `test:e2e` | A change to code many flows share (auth, layout, shared components, schema, config), and CI |
+| **Full suite**     | `test:e2e`                    | A change to code many flows share (auth, layout, shared components, schema, config), and CI           |
 
 Both save a screenshot per step to `e2e-artifacts/<flow>/NN-<step>.png`, also attached to the HTML report. A flow's folder holds only its latest run. A flow name is the spec's `test(...)` title, matched as a substring, so `"member renames a project"` runs that one flow. **Scope the run to the change**: one `test:e2e:flow` run per flow the change reaches. CI runs the full suite on every PR, which catches what the scoping missed.
 
