@@ -1,6 +1,5 @@
 import { useEditorState } from '@/contexts/EditorStateContext';
 import { CreateRelationSchema, CreateRelationType, RelationActionEnum } from '@/schemas/relation';
-import * as Accordion from '@radix-ui/react-accordion';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm, useWatch, Controller } from 'react-hook-form';
@@ -187,87 +186,78 @@ export function CreateRelationDialog() {
               </div>
             </FieldSet>
           </div>
-          <Accordion.Root
-            type="single"
-            value={isAdvancedSettingsEnabled ? 'advanced-settings' : ''}
-            collapsible
-            className="rounded border border-gray-200 p-4"
-          >
-            <Accordion.Item value="advanced-settings">
-              <Accordion.Header>
-                <Checkbox
-                  label="Advanced settings"
-                  name="as"
-                  onChange={(e) => {
-                    setIsAdvancedSettingsEnabled(e.target.checked);
-                  }}
-                />
-              </Accordion.Header>
-              <Accordion.Content asChild>
-                <div className="mt-4 flex flex-col gap-y-4">
-                  <Textbox {...register('name')} label="Constraint name" />
-                  <div className="flex gap-x-4">
-                    <Controller
-                      control={control}
-                      name="actions.onUpdate"
-                      render={({ field: { name, onBlur, onChange, value, ref } }) => (
-                        <Combobox
-                          ref={ref}
-                          label="On Update"
-                          name={name}
-                          options={RelationActionEnum.options.map((action) => ({
-                            label: action,
-                            value: action,
-                          }))}
-                          onBlur={onBlur}
-                          onChange={(option) => {
-                            if (option && 'value' in option) {
-                              onChange(option.value);
-                            }
-                          }}
-                          value={
-                            RelationActionEnum.options
-                              .map((action) => ({ label: action, value: action }))
-                              .find((option) => option.value === value) ?? null
+          <div className="rounded border border-gray-200 p-4">
+            <Checkbox
+              label="Advanced settings"
+              name="as"
+              onChange={(e) => {
+                setIsAdvancedSettingsEnabled(e.target.checked);
+              }}
+            />
+            {isAdvancedSettingsEnabled && (
+              <div className="mt-4 flex flex-col gap-y-4">
+                <Textbox {...register('name')} label="Constraint name" />
+                <div className="flex gap-x-4">
+                  <Controller
+                    control={control}
+                    name="actions.onUpdate"
+                    render={({ field: { name, onBlur, onChange, value, ref } }) => (
+                      <Combobox
+                        ref={ref}
+                        label="On Update"
+                        name={name}
+                        options={RelationActionEnum.options.map((action) => ({
+                          label: action,
+                          value: action,
+                        }))}
+                        onBlur={onBlur}
+                        onChange={(option) => {
+                          if (option && 'value' in option) {
+                            onChange(option.value);
                           }
-                          data-test="relation-action-on-update-combobox"
-                          className="w-1/2"
-                        />
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="actions.onDelete"
-                      render={({ field: { name, onBlur, onChange, value, ref } }) => (
-                        <Combobox
-                          ref={ref}
-                          label="On Delete"
-                          name={name}
-                          options={RelationActionEnum.options.map((action) => ({
-                            label: action,
-                            value: action,
-                          }))}
-                          onBlur={onBlur}
-                          onChange={(option) => {
-                            if (option && 'value' in option) {
-                              onChange(option.value);
-                            }
-                          }}
-                          value={
-                            RelationActionEnum.options
-                              .map((action) => ({ label: action, value: action }))
-                              .find((option) => option.value === value) ?? null
+                        }}
+                        value={
+                          RelationActionEnum.options
+                            .map((action) => ({ label: action, value: action }))
+                            .find((option) => option.value === value) ?? null
+                        }
+                        data-test="relation-action-on-update-combobox"
+                        className="w-1/2"
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="actions.onDelete"
+                    render={({ field: { name, onBlur, onChange, value, ref } }) => (
+                      <Combobox
+                        ref={ref}
+                        label="On Delete"
+                        name={name}
+                        options={RelationActionEnum.options.map((action) => ({
+                          label: action,
+                          value: action,
+                        }))}
+                        onBlur={onBlur}
+                        onChange={(option) => {
+                          if (option && 'value' in option) {
+                            onChange(option.value);
                           }
-                          data-test="relation-action-on-delete-combobox"
-                          className="w-1/2"
-                        />
-                      )}
-                    />
-                  </div>
+                        }}
+                        value={
+                          RelationActionEnum.options
+                            .map((action) => ({ label: action, value: action }))
+                            .find((option) => option.value === value) ?? null
+                        }
+                        data-test="relation-action-on-delete-combobox"
+                        className="w-1/2"
+                      />
+                    )}
+                  />
                 </div>
-              </Accordion.Content>
-            </Accordion.Item>
-          </Accordion.Root>
+              </div>
+            )}
+          </div>
           <div className="flex justify-end gap-x-2">
             <Button type="button" onClick={() => setSource(null)} disabled={isSubmitting}>
               Cancel
