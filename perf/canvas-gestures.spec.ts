@@ -11,9 +11,9 @@ const moves = 60;
 // editor costs about 10 ms here, so 60 of them land near 600 ms; one that re-renders nothing stays under 100 ms
 const hoverBudgetMs = 250;
 
-// Dragging a table moves it in React Flow's store on every move. Re-rendering its columns each time lands near 600 ms;
-// moving it alone stays under 300 ms
-const dragBudgetMs = 450;
+// Dragging a table moves it in React Flow's store on every move. Re-rendering its columns each time costs 310-370 ms
+// here, the better of two drags; moving it alone costs 190-210 ms
+const dragBudgetMs = 260;
 
 const renames = 5;
 
@@ -143,28 +143,46 @@ test(`dragging a table on a ${tableCount}-table canvas stays within ${dragBudget
 
   if (!cdp) return;
 
-  const table = page.locator('.react-flow__node').first();
-  const before = await table.boundingBox();
+  // A busy machine can slow one drag; the slow code this guards against is slow on both, so the faster one counts.
+  // Each drag takes a table nothing has moved yet, since a moved table can come to rest under its neighbour's columns
+  const drags = [
+    { tableIndex: 0, by: { x: 300, y: 180 } },
+    { tableIndex: 4, by: { x: -300, y: 180 } },
+  ];
 
-  expect(before, 'the first table is on screen').not.toBeNull();
+  const dragTimesMs: number[] = [];
 
-  if (!before) return;
+  for (const drag of drags) {
+    const header = page.locator('[data-test="table-header"]').nth(drag.tableIndex);
+    const start = await header.boundingBox();
 
-  const grip = { x: before.x + 40, y: before.y + 12 };
+    expect(start, `table ${drag.tableIndex} is on screen`).not.toBeNull();
 
-  const dragMs = await measureGesture(page, cdp, {
-    from: grip,
-    to: { x: grip.x + 300, y: grip.y + 180 },
-    pressed: true,
+    if (!start) return;
+
+    // The header's top padding is a drag handle; its name and the columns below are not
+    const grip = { x: start.x + 40, y: start.y + 8 };
+
+    dragTimesMs.push(
+      await measureGesture(page, cdp, {
+        from: grip,
+        to: { x: grip.x + drag.by.x, y: grip.y + drag.by.y },
+        pressed: true,
+      }),
+    );
+
+    expect(
+      Math.abs(((await header.boundingBox())?.x ?? start.x) - start.x),
+      `table ${drag.tableIndex} followed the pointer`,
+    ).toBeGreaterThan(200);
+  }
+
+  const dragMs = Math.min(...dragTimesMs);
+
+  console.log(`${moves} drag moves over ${tableCount} tables at 4x CPU, better of 2`, {
+    dragTimesMs: dragTimesMs.map(Math.round),
   });
 
-  console.log(`${moves} drag moves over ${tableCount} tables at 4x CPU`, {
-    dragMs: Math.round(dragMs),
-  });
-
-  expect((await table.boundingBox())?.x, 'the table followed the pointer').toBeGreaterThan(
-    before.x + 200,
-  );
   expect(dragMs, 'script time while dragging a table').toBeLessThan(dragBudgetMs);
 });
 
