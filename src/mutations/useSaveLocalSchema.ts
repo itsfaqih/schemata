@@ -6,8 +6,8 @@ import localforage from 'localforage';
 export function useSaveLocalSchema(id: SchemaType['id']) {
   const queryClient = useQueryClient();
 
-  return useMutation<SchemaType, unknown, SchemaType | ((currentSchema: SchemaType) => SchemaType)>(
-    async (newSchema) => {
+  return useMutation<SchemaType, unknown, (currentSchema: SchemaType) => SchemaType>(
+    async (updateSchema) => {
       let currentSchema = await localforage.getItem<SchemaType>(`schema-${id}`);
 
       if (!currentSchema) {
@@ -20,12 +20,7 @@ export function useSaveLocalSchema(id: SchemaType['id']) {
         currentSchema = queryDataSchema;
       }
 
-      if (typeof newSchema === 'function') {
-        return await localforage.setItem<SchemaType>(`schema-${id}`, {
-          ...newSchema(currentSchema),
-          name: newSchema.name || currentSchema.name,
-        });
-      }
+      const newSchema = updateSchema(currentSchema);
 
       return await localforage.setItem<SchemaType>(`schema-${id}`, {
         ...newSchema,
@@ -33,9 +28,10 @@ export function useSaveLocalSchema(id: SchemaType['id']) {
       });
     },
     {
-      onSuccess({ id }) {
-        queryClient.invalidateQueries(localSchemaQuery(id));
-        queryClient.invalidateQueries(localSchemaQuery());
+      onSuccess(savedSchema) {
+        // Refetches in the background; the mutation settles without waiting for them
+        void queryClient.invalidateQueries(localSchemaQuery(savedSchema.id));
+        void queryClient.invalidateQueries(localSchemaQuery());
       },
     },
   );

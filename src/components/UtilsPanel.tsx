@@ -1,7 +1,7 @@
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import { ArrowCounterClockwise, ArrowClockwise } from 'phosphor-react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { EditorPanelContainer } from './EditorPanelContainer';
 import { IconButton } from './IconButton';
 import { Separator } from './Separator';
@@ -11,7 +11,7 @@ export function UtilsPanel() {
   const reactFlowStoreApi = useStoreApi();
 
   const reactFlowInstance = useReactFlow();
-  const { undoableService } = useContext(EditorStateContext);
+  const { undoableService } = useEditorState();
 
   const [zoomPercentage, setZoomPercentage] = useState(
     Math.round(reactFlowInstance.getZoom() * 100),
@@ -25,7 +25,7 @@ export function UtilsPanel() {
     reactFlowInstance.zoomIn();
   };
 
-  reactFlowStoreApi.subscribe((y) => {
+  reactFlowStoreApi.subscribe(() => {
     setZoomPercentage(Math.round(reactFlowInstance.getZoom() * 100));
   });
 

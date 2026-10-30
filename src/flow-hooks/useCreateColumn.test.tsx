@@ -75,10 +75,10 @@ it('should create a column', () => {
   ).toHaveLength(1);
   expect(
     result.current.reactFlowInstance.getNodes().find((node) => node.id === tableId)?.data.columns[0]
-      .name,
+      ?.name,
   ).toEqual(columnData.name);
   expect(
     result.current.reactFlowInstance.getNodes().find((node) => node.id === tableId)?.data.columns[0]
-      .type,
+      ?.type,
   ).toEqual(columnData.type);
 });

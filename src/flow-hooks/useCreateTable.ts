@@ -1,10 +1,9 @@
 import { useReactFlow } from 'reactflow';
 import { TableNodeType, TableWithOptionalIdType, TableWithoutIdType } from '@/schemas/table';
-import { useContext } from 'react';
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 
 export function useCreateTable() {
-  const { undoableService } = useContext(EditorStateContext);
+  const { undoableService } = useEditorState();
   const reactFlowInstance = useReactFlow<TableWithoutIdType>();
 
   return (

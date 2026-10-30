@@ -1,20 +1,15 @@
 import { useReverseRelation } from '@/flow-hooks/useReverseRelation';
-import { RelationEdgeType } from '@/schemas/relation';
+import { EdgeType } from '@/schemas/relation';
 import { TableWithoutIdType } from '@/schemas/table';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
-import {
-  ArrowsRightLeftIcon,
-  Bars3Icon,
-  PencilSquareIcon,
-  TrashIcon,
-} from '@heroicons/react/20/solid';
+import { ArrowsRightLeftIcon, Bars3Icon, TrashIcon } from '@heroicons/react/20/solid';
 import { useCallback } from 'react';
-import { useStore, Position, getSmoothStepPath, useReactFlow } from 'reactflow';
+import { useStore, getSmoothStepPath, useReactFlow, EdgeProps } from 'reactflow';
 import { DropdownMenu } from '../DropdownMenu';
 import { getEdgeParams } from './utils';
 
 type SimpleFloatingEdgeProps = Pick<
-  RelationEdgeType,
+  EdgeProps<EdgeType>,
   'id' | 'source' | 'target' | 'markerStart' | 'markerEnd' | 'style' | 'data'
 >;
 
@@ -33,17 +28,24 @@ export function SimpleFloatingEdge({
   const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
   const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
 
+  const sourceColumnId = data?.sourceColumnId;
+  const targetColumnId = data?.targetColumnId;
+
   const relatedEdge = useStore(
     useCallback(
       (store) =>
         store.edges.find(
           (edge) =>
-            getColumnIdFromHandleId(edge.sourceHandle as string) === data?.sourceColumnId &&
-            getColumnIdFromHandleId(edge.targetHandle as string) === data?.targetColumnId,
+            !!edge.sourceHandle &&
+            !!edge.targetHandle &&
+            getColumnIdFromHandleId(edge.sourceHandle) === sourceColumnId &&
+            getColumnIdFromHandleId(edge.targetHandle) === targetColumnId,
         ),
-      [source, target],
+      [sourceColumnId, targetColumnId],
     ),
   );
+
+  const reverseRelation = useReverseRelation();
 
   if (!sourceNode || !targetNode || !relatedEdge) {
     return null;
@@ -56,16 +58,14 @@ export function SimpleFloatingEdge({
   );
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
-    sourceX: sx as number,
-    sourceY: sy as number,
-    sourcePosition: sourcePos as Position,
-    targetPosition: targetPos as Position,
-    targetX: tx as number,
-    targetY: ty as number,
+    sourceX: sx,
+    sourceY: sy,
+    sourcePosition: sourcePos,
+    targetPosition: targetPos,
+    targetX: tx,
+    targetY: ty,
     borderRadius: 16,
   });
-
-  const reverseRelation = useReverseRelation();
 
   return (
     <>
@@ -80,17 +80,17 @@ export function SimpleFloatingEdge({
           }
         }}
         d={edgePath}
-        markerStart={markerStart as string}
-        markerEnd={markerEnd as string}
+        markerStart={markerStart}
+        markerEnd={markerEnd}
         style={style}
         className="fill-none stroke-slate-400 stroke-[1.5] outline-none focus:stroke-sky-500"
       />
       <path
         d={edgePath}
         onClick={(e) => {
-          const edge = e.currentTarget.previousElementSibling as HTMLElement;
+          const edge = e.currentTarget.previousElementSibling;
 
-          edge.focus();
+          if (edge instanceof SVGElement) edge.focus();
         }}
         className="peer fill-none stroke-transparent stroke-[20] outline-none"
       />
@@ -109,10 +109,6 @@ export function SimpleFloatingEdge({
             </button>
           }
           items={[
-            // {
-            //   icon: PencilSquareIcon,
-            //   label: 'Edit',
-            // },
             {
               icon: ArrowsRightLeftIcon,
               label: 'Reverse',

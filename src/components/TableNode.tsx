@@ -2,22 +2,22 @@ import { clsx } from '@/utils/clsx';
 import { TableHeader } from './TableHeader';
 import { useCreateColumn } from '@/flow-hooks/useCreateColumn';
 import { emptyCreateVarcharColumn } from '@/utils/reactflow';
-import { TableNodeType } from '@/schemas/table';
+import { TableWithoutIdType } from '@/schemas/table';
 import { Tooltip } from './Tooltip';
 import { useState } from 'react';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import { TableColumnList } from './TableColumnList';
 import { DndContext } from '@dnd-kit/core';
+import { NodeProps } from 'reactflow';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useReorderColumn } from '@/flow-hooks/useReorderColumn';
 
-export function TableNode({ id, data: table }: TableNodeType) {
+export function TableNode({ id, data: table }: NodeProps<TableWithoutIdType>) {
   const createColumn = useCreateColumn();
 
   const [isFocused, setIsFocused] = useState(false);
 
   const reorderColumn = useReorderColumn();
-  const [activeId, setActiveId] = useState<string | number | null>(null);
 
   return (
     <div
@@ -36,14 +36,11 @@ export function TableNode({ id, data: table }: TableNodeType) {
       <TableHeader table={{ id, ...table }} />
 
       <DndContext
-        onDragStart={({ active }) => setActiveId(active.id)}
         onDragEnd={({ active, over }) => {
-          setActiveId(null);
-
           if (over && active.id !== over.id) {
             reorderColumn({
-              movedColumnId: active.id as string,
-              hoveredColumnId: over.id as string,
+              movedColumnId: String(active.id),
+              hoveredColumnId: String(over.id),
               tableId: id,
             });
           }

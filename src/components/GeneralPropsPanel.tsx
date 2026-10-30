@@ -1,6 +1,6 @@
 import { Check } from 'phosphor-react';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconButton } from './IconButton';
@@ -29,7 +29,7 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    await saveDatabaseLocal(data);
+    await saveDatabaseLocal(() => data);
 
     setIsRenaming(false);
   });
@@ -38,8 +38,15 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
     setIsRenaming(true);
   };
 
+  const latestSchemaRef = useRef(schema);
+
   useEffect(() => {
-    reset(schema);
+    latestSchemaRef.current = schema;
+  });
+
+  // Resets only on a rename, to the latest schema with that name
+  useEffect(() => {
+    reset({ ...latestSchemaRef.current, name: schema.name });
   }, [reset, schema.name]);
 
   return (
@@ -52,7 +59,7 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
               if (e.key === 'Escape') {
                 e.preventDefault();
                 e.stopPropagation();
-                onSubmit();
+                void onSubmit();
               }
             }}
             autoComplete="off"
@@ -78,7 +85,7 @@ export function GeneralPropsPanel({ schema }: GeneralPropsPanelProps) {
         </FocusLock>
       ) : (
         <>
-          <span data-test="schema-name" className="py-2 px-3 text-gray-800">
+          <span data-test="schema-name" className="px-3 py-2 text-gray-800">
             {schema.name}
           </span>
           <IconButton

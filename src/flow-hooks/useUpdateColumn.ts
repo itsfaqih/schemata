@@ -1,14 +1,13 @@
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import { IndexType } from '@/schemas/base';
 import { TableWithoutIdType } from '@/schemas/table';
 import { UpdateColumnType } from '@/schemas/update-column';
 import { getColumnIdFromHandleId } from '@/utils/reactflow';
-import { useContext } from 'react';
 import { Node, useReactFlow } from 'reactflow';
 import { useHandleEdgeMarker } from './useHandleEdgeMarker';
 
 export function useUpdateColumn() {
-  const { undoableService } = useContext(EditorStateContext);
+  const { undoableService } = useEditorState();
   const reactFlowInstance = useReactFlow<TableWithoutIdType>();
   const handleEdgeMarker = useHandleEdgeMarker();
 
@@ -111,6 +110,10 @@ export function useUpdateColumn() {
     if (changedUniqueIndexData) {
       reactFlowInstance.setEdges((edges) => {
         return edges.map((edge) => {
+          if (!edge.sourceHandle || !edge.targetHandle) {
+            throw Error(`Handle id for edge ${edge.id} is empty`);
+          }
+
           const { markerEnd, markerStart } = handleEdgeMarker(
             edge,
             edge.source === changedUniqueIndexData?.nodeId
@@ -123,8 +126,8 @@ export function useUpdateColumn() {
             markerEnd,
             markerStart,
             data: {
-              sourceColumnId: getColumnIdFromHandleId(edge.sourceHandle as string),
-              targetColumnId: getColumnIdFromHandleId(edge.targetHandle as string),
+              sourceColumnId: getColumnIdFromHandleId(edge.sourceHandle),
+              targetColumnId: getColumnIdFromHandleId(edge.targetHandle),
             },
           };
         });

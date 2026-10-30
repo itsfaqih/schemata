@@ -22,7 +22,7 @@ export function schemaToBase64Url(schema: SchemaType): string {
 export function base64UrlToSchema(base64UrlString: string): SchemaType {
   const decoded = decode(base64UrlString);
 
-  const json = JSON.parse(decoded);
+  const json: unknown = JSON.parse(decoded);
 
   return SchemaSchema.parse(json);
 }

@@ -1,4 +1,6 @@
-class ResizeObserver {
+import { vi } from 'vitest';
+
+class ResizeObserverMock {
   callback: globalThis.ResizeObserverCallback;
 
   constructor(callback: globalThis.ResizeObserverCallback) {
@@ -6,7 +8,15 @@ class ResizeObserver {
   }
 
   observe(target: Element) {
-    this.callback([{ target } as globalThis.ResizeObserverEntry], this);
+    const entry: globalThis.ResizeObserverEntry = {
+      target,
+      borderBoxSize: [],
+      contentBoxSize: [],
+      devicePixelContentBoxSize: [],
+      contentRect: target.getBoundingClientRect(),
+    };
+
+    this.callback([entry], this);
   }
 
   unobserve() {}
@@ -14,9 +24,9 @@ class ResizeObserver {
   disconnect() {}
 }
 
-global.ResizeObserver = ResizeObserver;
+global.ResizeObserver = ResizeObserverMock;
 
-class DOMMatrixReadOnly {
+class DOMMatrixReadOnlyMock {
   m22: number;
   constructor(transform: string) {
     const scale = transform?.match(/scale\(([1-9.])\)/)?.[1];
@@ -24,8 +34,8 @@ class DOMMatrixReadOnly {
   }
 }
 
-// @ts-ignore
-global.DOMMatrixReadOnly = DOMMatrixReadOnly;
+// Covers only the m22 scale that reactflow reads, so it can't satisfy the full DOMMatrixReadOnly type
+vi.stubGlobal('DOMMatrixReadOnly', DOMMatrixReadOnlyMock);
 
 // Object.defineProperties(global.HTMLElement.prototype, {
 //   offsetHeight: {

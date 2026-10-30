@@ -1,5 +1,5 @@
 import { emptyTableWithoutId } from '@/utils/reactflow';
-import { DragEvent, RefObject, useCallback } from 'react';
+import { DragEvent, RefObject } from 'react';
 import { useReactFlow } from 'reactflow';
 import { useCreateTable } from './useCreateTable';
 
@@ -11,28 +11,25 @@ export function useHandleCreateTableOnDrop({ reactFlowWrapper }: UseHandleCreate
   const reactFlowInstance = useReactFlow();
   const createTable = useCreateTable();
 
-  return useCallback(
-    (event: DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
+  return (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
 
-      if (!reactFlowWrapper.current || !reactFlowInstance) {
-        return;
-      }
+    if (!reactFlowWrapper.current || !reactFlowInstance) {
+      return;
+    }
 
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      const type = event.dataTransfer.getData('application/reactflow');
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+    const type = event.dataTransfer.getData('application/reactflow');
 
-      if (!type) {
-        return;
-      }
+    if (!type) {
+      return;
+    }
 
-      const position = reactFlowInstance.project({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      });
+    const position = reactFlowInstance.project({
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    });
 
-      createTable(emptyTableWithoutId(), position);
-    },
-    [reactFlowInstance],
-  );
+    createTable(emptyTableWithoutId(), position);
+  };
 }

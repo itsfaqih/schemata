@@ -1,7 +1,5 @@
-import { clsx } from '@/utils/clsx';
 import * as RadixContextMenu from '@radix-ui/react-context-menu';
 import { ElementType, MouseEvent, ReactNode } from 'react';
-import { Kbd } from './Kbd';
 import { Menu } from './Menu';
 
 type ContextMenuProps = {
@@ -18,7 +16,7 @@ type ContextMenuProps = {
   disabled?: boolean;
 };
 
-export function ContextMenu({ menu, children, label, disabled }: ContextMenuProps) {
+export function ContextMenu({ menu, children, label, disabled = false }: ContextMenuProps) {
   return (
     <RadixContextMenu.Root>
       <RadixContextMenu.Trigger disabled={disabled} asChild>

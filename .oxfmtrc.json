@@ -5,6 +5,6 @@
   "trailingComma": "all",
   "arrowParens": "always",
   "semi": true,
-  "sortTailwindcss": { "config": "./tailwind.config.cjs" },
+  "sortTailwindcss": { "config": "./tailwind.config.ts" },
   "ignorePatterns": ["pnpm-lock.yaml", ".agents/**", ".claude/**", "tools/oxlint/anti-slop/**"]
 }

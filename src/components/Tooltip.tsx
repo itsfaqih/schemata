@@ -9,11 +9,14 @@ type TooltipProps = {
 };
 
 export function Tooltip({ text, children, allowOpen }: TooltipProps) {
-  const isAllowOpen = allowOpen !== undefined ? (allowOpen ? undefined : false) : undefined;
+  // allowOpen={false} forces the tooltip closed; otherwise Radix controls it
+  const rootProps: Pick<RadixTooltip.TooltipProps, 'open'> = {};
+
+  if (allowOpen === false) rootProps.open = false;
 
   return (
     <RadixTooltip.Provider>
-      <RadixTooltip.Root delayDuration={0} disableHoverableContent open={isAllowOpen}>
+      <RadixTooltip.Root delayDuration={0} disableHoverableContent {...rootProps}>
         <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
           <RadixTooltip.Content

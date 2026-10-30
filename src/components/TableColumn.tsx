@@ -1,15 +1,15 @@
 import {
+  BaseSyntheticEvent,
   CSSProperties,
   forwardRef,
   HTMLAttributes,
   KeyboardEventHandler,
   Ref,
-  useContext,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FocusLock, { AutoFocusInside } from 'react-focus-lock';
 import { clsx } from '@/utils/clsx';
@@ -33,9 +33,9 @@ import {
   TrashIcon,
 } from '@heroicons/react/20/solid';
 import { Tooltip } from './Tooltip';
-import { CreatableCombobox } from './CreatableCombobox';
+import { CreatableCombobox, isMultiValue } from './CreatableCombobox';
 import { DotsSixVertical, FlowArrow } from 'phosphor-react';
-import { EditorStateContext } from '@/contexts/EditorStateContext';
+import { useEditorState } from '@/contexts/EditorStateContext';
 import {
   ColumnType,
   ColumnTypeEnum,
@@ -43,6 +43,10 @@ import {
   ColumnTypeWithValuesEnum,
 } from '@/schemas/column';
 import { UpdateColumnType, UpdateColumnSchema } from '@/schemas/update-column';
+import { z } from 'zod';
+
+// RHF types `values` as any[]: it only exists on the ENUM and SET members of the column union
+const ColumnValuesSchema = z.string().array().optional();
 
 type TableColumnFinalProps = {
   column: ColumnType;
@@ -66,8 +70,8 @@ function TableColumnComponent(
   }: TableColumnFinalProps,
   dragHandleRef: Ref<HTMLDivElement>,
 ) {
-  const [isColumnFocused, setIsColumnFocused] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  // A just-created column has no name yet and opens straight into editing
+  const [isEditing, setIsEditing] = useState(() => column.name === '');
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -96,7 +100,6 @@ function TableColumnComponent(
     handleSubmit,
     register,
     reset,
-    watch,
   } = useForm<UpdateColumnType>({
     resolver: zodResolver(
       UpdateColumnSchema.refine(({ id, name }) => validateUniqueColumnName({ id, name, tableId }), {
@@ -107,24 +110,27 @@ function TableColumnComponent(
     defaultValues: { ...column, isPrimaryKey, isUniqueIndex, tableId },
   });
 
-  const onSubmit = handleSubmit((data) => {
-    updateColumn(data);
-    setIsEditing(false);
+  const selectedType = useWatch({ control, name: 'type' });
 
-    queueMicrotask(() => {
-      containerRef.current?.focus();
-    });
+  const onSubmit = (e?: BaseSyntheticEvent) =>
+    handleSubmit((data) => {
+      updateColumn(data);
+      setIsEditing(false);
+
+      queueMicrotask(() => {
+        containerRef.current?.focus();
+      });
+    })(e);
+
+  const keyFlagsRef = useRef({ isPrimaryKey, isUniqueIndex });
+
+  useEffect(() => {
+    keyFlagsRef.current = { isPrimaryKey, isUniqueIndex };
   });
 
+  // Resets when the column or table changes; the key flags alone don't trigger it
   useEffect(() => {
-    // Automatically edit after creation
-    if (column.name === '') {
-      triggerEdit();
-    }
-  }, []);
-
-  useEffect(() => {
-    reset({ ...column, isPrimaryKey, isUniqueIndex, tableId });
+    reset({ ...column, ...keyFlagsRef.current, tableId });
   }, [reset, column, tableId]);
 
   const handleFormKeyDown: KeyboardEventHandler<HTMLElement> = (e) => {
@@ -136,7 +142,7 @@ function TableColumnComponent(
       e.preventDefault();
       e.stopPropagation();
 
-      onSubmit(e);
+      void onSubmit(e);
     }
   };
 
@@ -169,7 +175,7 @@ function TableColumnComponent(
     createColumn({ ...column, tableId });
   };
 
-  const { createRelationDialogStore } = useContext(EditorStateContext);
+  const { createRelationDialogStore } = useEditorState();
 
   const triggerAddRelation = () => {
     createRelationDialogStore.setSource({ columnId: column.id, tableId });
@@ -212,8 +218,6 @@ function TableColumnComponent(
         ref={containerRef}
         tabIndex={0}
         onClick={(e) => e.stopPropagation()}
-        onFocus={() => setIsColumnFocused(true)}
-        onBlur={() => setIsColumnFocused(false)}
         onDoubleClick={() => {
           if (!isEditing) {
             triggerEdit();
@@ -306,15 +310,17 @@ function TableColumnComponent(
                         onChange(option.value);
                       }
                     }}
-                    value={ColumnTypeEnum.options
-                      .map((type) => ({ label: type, value: type }))
-                      .find((option) => option.value === value)}
+                    value={
+                      ColumnTypeEnum.options
+                        .map((type) => ({ label: type, value: type }))
+                        .find((option) => option.value === value) ?? null
+                    }
                     data-test="column-type-combobox"
                     className="mt-3"
                   />
                 )}
               />
-              {ColumnTypeWithLengthEnum.safeParse(watch('type')).success && (
+              {ColumnTypeWithLengthEnum.safeParse(selectedType).success && (
                 <Textbox
                   label="Length"
                   {...register('length', { valueAsNumber: true })}
@@ -323,7 +329,7 @@ function TableColumnComponent(
                   className="mt-4"
                 />
               )}
-              {ColumnTypeWithValuesEnum.safeParse(watch('type')).success && (
+              {ColumnTypeWithValuesEnum.safeParse(selectedType).success && (
                 <Controller
                   control={control}
                   name="values"
@@ -333,12 +339,15 @@ function TableColumnComponent(
                       label="Values"
                       name={name}
                       onBlur={onBlur}
-                      onChange={(values) => {
-                        if (Array.isArray(values)) {
-                          onChange(values.map((val) => (val as { value: string }).value));
+                      onChange={(options) => {
+                        if (isMultiValue(options)) {
+                          onChange(options.map((option) => option.value));
                         }
                       }}
-                      value={(value ?? []).map((val) => ({ label: val, value: val }))}
+                      value={(ColumnValuesSchema.parse(value) ?? []).map((val) => ({
+                        label: val,
+                        value: val,
+                      }))}
                       data-test="column-values-combobox"
                       className="mt-4"
                     />

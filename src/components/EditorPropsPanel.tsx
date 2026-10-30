@@ -38,7 +38,7 @@ export function EditorPropsPanel({ schema }: EditorPropsPanelProps) {
       return;
     }
 
-    toPng(canvas, {
+    void toPng(canvas, {
       filter: (node) => {
         // we don't want to add the minimap and the controls to the image
         if (
@@ -86,9 +86,14 @@ function ShareLinkButton({ schema }: ShareLinkButtonProps) {
   const copyLinkToClipboard = () => {
     const url = `${window.location.origin}/?schema=${encodedDatabase}`;
 
-    copy(url);
+    void copy(url);
 
-    router.navigate({ params: '', to: '/', search: { schema: encodedDatabase }, replace: true });
+    void router.navigate({
+      params: '',
+      to: '/',
+      search: { schema: encodedDatabase },
+      replace: true,
+    });
 
     toast.success('URL copied to clipboard');
   };
