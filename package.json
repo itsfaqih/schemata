@@ -1,13 +1,20 @@
 {
   "name": "schemata",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "setup": "pnpm install --frozen-lockfile && pnpm exec playwright install chromium",
     "dev": "portless run vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "pnpm run lint:ts && pnpm run lint:format && pnpm run lint:workflow",
+    "lint:fix": "pnpm run lint:ts:fix && pnpm run lint:format:fix",
+    "lint:ts": "tsrs -p tsconfig.json && oxlint --type-aware --deny-warnings",
+    "lint:ts:fix": "oxlint --type-aware --fix",
+    "lint:format": "oxfmt --check",
+    "lint:format:fix": "oxfmt",
+    "lint:workflow": "docker run --rm -v \"$PWD:/repo\" -w /repo rhysd/actionlint:1.7.12 -color"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.7",
@@ -67,6 +74,7 @@
     "@types/uuid": "^9.0.0",
     "@vitejs/plugin-react": "6.1.2",
     "autoprefixer": "^10.4.13",
+    "eslint-plugin-playwright": "2.12.1",
     "fast-check": "4.10.2",
     "happy-dom": "21.0.4",
     "oxfmt": "0.75.0",

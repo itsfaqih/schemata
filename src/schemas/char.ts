@@ -18,5 +18,3 @@ export const CharColumnSchema = BaseColumnSchema.merge(BaseCharColumnSchema);
 export const CreateCharColumnSchema = BaseCreateColumnSchema.merge(BaseCharColumnSchema);
 
 export const UpdateCharColumnSchema = BaseUpdateColumnSchema.merge(BaseCharColumnSchema);
-
-

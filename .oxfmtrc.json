@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "semi": true,
+  "sortTailwindcss": { "config": "./tailwind.config.cjs" },
+  "ignorePatterns": ["pnpm-lock.yaml", ".agents/**", ".claude/**", "tools/oxlint/anti-slop/**"]
+}

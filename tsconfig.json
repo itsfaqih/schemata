@@ -14,7 +14,14 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node"]
+    "types": ["node"],
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true
   },
-  "include": ["src", "e2e", "tools", "*.config.ts"]
+  "include": ["src", "e2e", "tools", "*.config.ts"],
+  "exclude": ["tools/oxlint/anti-slop"]
 }

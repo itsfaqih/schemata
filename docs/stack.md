@@ -2,22 +2,22 @@
 
 The tools this project uses, chosen with the user during setup. The other docs name the job; this table says which tool does it.
 
-| Job | Tool |
-| --- | --- |
-| Dependency manager | pnpm (version pinned in `packageManager`) |
-| Dev-server ports and URLs | portless |
-| Web frontend | Vite + React + TanStack Router (the project's own) |
-| Interactive UI primitives | Base UI for new components; existing Radix components move over as they are changed |
-| Linter | Oxlint, type-aware through oxlint-tsgolint, with the vendored anti-slop plugin (`tools/oxlint/anti-slop/`) |
-| Formatter | Oxfmt |
-| Type checker | tsrs (Rust port of the TypeScript 7 compiler) |
-| Schema validation at boundaries | Zod |
-| Unit and integration runner | Vitest |
-| Property-based testing | fast-check |
-| Mutation testing | StrykerJS (Vitest runner) |
-| Web e2e runner | Playwright |
-| Browser driver for agents | agent-browser (global CLI, not a project dependency) |
-| PR descriptions and evidence | GitHub CLI (`gh` 2.101 or later) |
+| Job                             | Tool                                                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Dependency manager              | pnpm (version pinned in `packageManager`)                                                                  |
+| Dev-server ports and URLs       | portless                                                                                                   |
+| Web frontend                    | Vite + React + TanStack Router (the project's own)                                                         |
+| Interactive UI primitives       | Base UI for new components; existing Radix components move over as they are changed                        |
+| Linter                          | Oxlint, type-aware through oxlint-tsgolint, with the vendored anti-slop plugin (`tools/oxlint/anti-slop/`) |
+| Formatter                       | Oxfmt                                                                                                      |
+| Type checker                    | tsrs (Rust port of the TypeScript 7 compiler)                                                              |
+| Schema validation at boundaries | Zod                                                                                                        |
+| Unit and integration runner     | Vitest                                                                                                     |
+| Property-based testing          | fast-check                                                                                                 |
+| Mutation testing                | StrykerJS (Vitest runner)                                                                                  |
+| Web e2e runner                  | Playwright                                                                                                 |
+| Browser driver for agents       | agent-browser (global CLI, not a project dependency)                                                       |
+| PR descriptions and evidence    | GitHub CLI (`gh` 2.101 or later)                                                                           |
 
 Not used, because the project has nothing they apply to: dependency containers, third-party or cloud emulation, a backend framework, logging and analytics, infrastructure as code, pre-commit hooks.
 

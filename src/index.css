@@ -10,7 +10,7 @@
 }
 
 .react-select-container {
-  @apply text-sm w-full !important;
+  @apply w-full text-sm !important;
 }
 
 .react-select\_\_option--is-focused {

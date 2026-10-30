@@ -1,0 +1,101 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "react-perf", "import", "oxc", "vitest", "unicorn"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "ignorePatterns": [
+    ".agent/**",
+    ".agents/**",
+    ".claude/**",
+    ".codex/**",
+    ".continue/**",
+    ".cursor/**",
+    ".gemini/**",
+    ".opencode/**",
+    ".pi/**",
+    ".roo/**",
+    ".windsurf/**",
+    "tools/oxlint/anti-slop/**"
+  ],
+  "jsPlugins": [
+    {
+      "name": "anti-slop",
+      "specifier": "./tools/oxlint/anti-slop/index.ts"
+    }
+  ],
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-type-assertion": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/no-floating-promises": "error",
+    "oxc/no-accumulating-spread": "error",
+    "anti-slop/no-array-filter-map": "error",
+    "anti-slop/no-reduce-accumulator-copy": "error",
+    "anti-slop/no-chained-type-assertions": "error",
+    "anti-slop/no-conditional-empty-object-spread": "error",
+    "anti-slop/no-known-value-widening": "error",
+    "anti-slop/no-module-mocking": "error",
+    "anti-slop/no-object-parameters": "error",
+    "anti-slop/no-reflect-apply": "error",
+    "anti-slop/no-reflect-get": "error",
+    "anti-slop/no-runtime-typeof": "error",
+    "anti-slop/no-shape-in-symbol-names": "error",
+    "anti-slop/no-unknown-parameters": "error",
+    "anti-slop/no-unknown-returns": "error",
+    "anti-slop/no-unknown-type-aliases": "error",
+    "anti-slop/no-unsafe-dictionary-type": "error",
+    "anti-slop/no-widen-then-assert": "error",
+    "anti-slop/require-readable-spacing": "error",
+    "anti-slop/require-safety-comment-for-type-assertion": "error",
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css", "@fontsource/**"]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.test.{ts,tsx}"],
+      "rules": {
+        "vitest/expect-expect": "error",
+        "vitest/no-conditional-expect": "error",
+        "vitest/no-standalone-expect": "error",
+        "vitest/no-identical-title": "error",
+        "vitest/valid-expect": [
+          "error",
+          {
+            "alwaysAwait": true
+          }
+        ],
+        "vitest/no-focused-tests": "error"
+      }
+    },
+    {
+      "files": ["e2e/**/*.ts"],
+      "jsPlugins": ["eslint-plugin-playwright"],
+      "rules": {
+        "playwright/expect-expect": "error",
+        "playwright/no-conditional-expect": "error",
+        "playwright/no-conditional-in-test": "error",
+        "playwright/no-standalone-expect": "error",
+        "playwright/no-wait-for-timeout": "error",
+        "playwright/no-wait-for-selector": "error",
+        "playwright/no-force-option": "error",
+        "playwright/missing-playwright-await": "error",
+        "playwright/no-focused-test": "error",
+        "playwright/valid-expect": "error",
+        "playwright/no-element-handle": "error",
+        "playwright/no-useless-await": "error"
+      }
+    }
+  ]
+}
