@@ -4,7 +4,7 @@ import { useCreateColumn } from '@/flow-hooks/useCreateColumn';
 import { emptyCreateVarcharColumn } from '@/utils/reactflow';
 import { TableNodeType } from '@/schemas/table';
 import { Tooltip } from './Tooltip';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import { TableColumnList } from './TableColumnList';
 import { DndContext } from '@dnd-kit/core';
@@ -12,7 +12,13 @@ import { NodeProps } from '@xyflow/react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useReorderColumn } from '@/flow-hooks/useReorderColumn';
 
-export function TableNode({ id, data: table }: NodeProps<TableNodeType>) {
+// React Flow passes the node's position on every drag move; the table renders only from its id and data
+export const TableNode = memo(
+  TableNodeContent,
+  (previous, next) => previous.id === next.id && previous.data === next.data,
+);
+
+function TableNodeContent({ id, data: table }: NodeProps<TableNodeType>) {
   const createColumn = useCreateColumn();
 
   const [isFocused, setIsFocused] = useState(false);
