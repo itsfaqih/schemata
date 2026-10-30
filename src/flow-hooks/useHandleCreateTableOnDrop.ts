@@ -4,7 +4,7 @@ import { useReactFlow } from 'reactflow';
 import { useCreateTable } from './useCreateTable';
 
 type UseHandleCreateTableOnDropParams = {
-  reactFlowWrapper: RefObject<HTMLDivElement>;
+  reactFlowWrapper: RefObject<HTMLDivElement | null>;
 };
 
 export function useHandleCreateTableOnDrop({ reactFlowWrapper }: UseHandleCreateTableOnDropParams) {
