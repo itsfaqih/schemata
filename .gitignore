@@ -32,3 +32,6 @@ vite.config.ts.timestamp-*
 # Mutation testing
 .stryker-tmp
 reports
+
+# Pull request evidence (docs/pull-requests.md)
+.pr
