@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import localforage from 'localforage';
 import { ReactNode } from 'react';
 import { beforeEach, expect, it } from 'vitest';
+import { useLocalSchemaQuery } from '@/queries/useSchemaQuery';
 import { SchemaType } from '@/schemas/schema';
 import { useSaveLocalSchema } from './useSaveLocalSchema';
 
@@ -18,12 +19,18 @@ const shop: SchemaType = {
 
 const position = { itemId: '2d1c3b4a-0f9e-4d8c-8b7a-6e5f4d3c2b1a', x: 40, y: 80 };
 
-function renderSave(queryClient: QueryClient) {
-  return renderHook(() => useSaveLocalSchema('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'), {
+function renderWithClient<T>(queryClient: QueryClient, hook: () => T) {
+  return renderHook(hook, {
     wrapper: ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     ),
   });
+}
+
+function renderSave(queryClient: QueryClient) {
+  return renderWithClient(queryClient, () =>
+    useSaveLocalSchema('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
+  );
 }
 
 beforeEach(async () => {
@@ -84,4 +91,26 @@ it('rejects when neither storage nor the cache holds the schema', async () => {
   await expect(localforage.getItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff')).resolves.toBe(
     null,
   );
+});
+
+it('refreshes mounted schema views after saving', async () => {
+  await localforage.setItem('schema-6f9619ff-8b86-4d01-b42d-00cf4fc964ff', shop);
+
+  const { result } = renderWithClient(new QueryClient(), () => ({
+    byId: useLocalSchemaQuery('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
+    current: useLocalSchemaQuery(),
+    save: useSaveLocalSchema('6f9619ff-8b86-4d01-b42d-00cf4fc964ff'),
+  }));
+
+  await waitFor(() => {
+    expect(result.current.byId.data).toEqual(shop);
+    expect(result.current.current.data).toEqual(shop);
+  });
+
+  await result.current.save.mutateAsync({ ...shop, name: 'Store' });
+
+  await waitFor(() => {
+    expect(result.current.byId.data).toEqual({ ...shop, name: 'Store' });
+    expect(result.current.current.data).toEqual({ ...shop, name: 'Store' });
+  });
 });

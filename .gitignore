@@ -28,3 +28,7 @@ vite.config.ts.timestamp-*
 
 # Vitest browser-mode failure screenshots
 .vitest
+
+# Mutation testing
+.stryker-tmp
+reports

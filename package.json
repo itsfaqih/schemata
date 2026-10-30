@@ -16,7 +16,8 @@
     "lint:format:fix": "oxfmt",
     "lint:workflow": "docker run --rm -v \"$PWD:/repo\" -w /repo rhysd/actionlint:1.7.12 -color",
     "test": "vitest run --project unit",
-    "test:integration": "vitest run --project integration"
+    "test:integration": "vitest run --project integration",
+    "test:mutation": "stryker run"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.7",

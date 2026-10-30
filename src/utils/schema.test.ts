@@ -1,7 +1,7 @@
 import * as fc from 'fast-check';
 import { expect, it } from 'vitest';
 import { SchemaType } from '@/schemas/schema';
-import { base64UrlToSchema, schemaToBase64Url } from './schema';
+import { base64UrlToSchema, emptySchemaFactory, schemaToBase64Url } from './schema';
 
 const shop: SchemaType = {
   id: '6f9619ff-8b86-4d01-b42d-00cf4fc964ff',
@@ -34,6 +34,25 @@ it('rejects a shared schema for an unsupported vendor', () => {
       'eyJpZCI6IjZmOTYxOWZmLThiODYtNGQwMS1iNDJkLTAwY2Y0ZmM5NjRmZiIsIm5hbWUiOiJTaG9wIiwidmVuZG9yIjoiUE9TVEdSRVM6MTYiLCJ0YWJsZXMiOltdLCJncm91cHMiOltdLCJwb3NpdGlvbnMiOltdLCJyZWxhdGlvbnMiOltdfQ',
     ),
   ).toThrow(/vendor/);
+});
+
+it('starts a new schema empty, untitled and shareable', () => {
+  const schema = emptySchemaFactory();
+
+  expect(schema.id).toMatch(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+  );
+  expect(schema).toEqual({
+    id: schema.id,
+    name: 'Untitled',
+    vendor: 'MYSQL:8.0',
+    tables: [],
+    groups: [],
+    positions: [],
+    relations: [],
+  });
+  expect(base64UrlToSchema(schemaToBase64Url(schema))).toEqual(schema);
+  expect(emptySchemaFactory().id).not.toBe(schema.id);
 });
 
 const trimmedName = fc
