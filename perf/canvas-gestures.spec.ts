@@ -7,13 +7,30 @@ const columnsPerTable = 6;
 
 const moves = 60;
 
-// Main-thread script time for 60 pointer moves over a 64-table schema at 4x CPU. A hover move that re-renders the
-// editor costs about 10 ms here, so 60 of them land near 600 ms; one that re-renders nothing stays under 100 ms
+// The budgets below hold for a 4x CPU slowdown of the machine they were measured on, which runs the
+// calibration workload in about 36 ms. A slower machine, such as a CI runner, is throttled less, so it runs the
+// gestures at the speed the budgets assume
+const targetSlowdown = 4;
+
+const referenceCalibrationMs = 36;
+
+// Each drag takes a table nothing has moved yet, since a moved table can come to rest under its neighbour's columns
+const drags = [
+  { tableIndex: 0, by: { x: 300, y: 180 } },
+  { tableIndex: 4, by: { x: -300, y: 180 } },
+];
+
+// A dragged table that re-renders its columns on every move costs more the more columns it has, so the dragged tables
+// are wide enough to set that cost well apart from the move itself
+const draggedTableColumns = 30;
+
+// Main-thread script time for 60 pointer moves over a 64-table schema. A hover move that re-renders the
+// editor costs about 10 ms on the reference machine, so 60 of them land near 600 ms; one that re-renders nothing stays under 100 ms
 const hoverBudgetMs = 250;
 
-// Dragging a table moves it in React Flow's store on every move. Re-rendering its columns each time costs 310-370 ms
-// here, the better of two drags; moving it alone costs 190-210 ms
-const dragBudgetMs = 260;
+// Dragging a table moves it in React Flow's store on every move. Re-rendering its 30 columns each time costs 830-860 ms
+// on the reference machine, the better of two drags; moving it alone costs 270-280 ms
+const dragBudgetMs = 500;
 
 const renames = 5;
 
@@ -26,14 +43,21 @@ function largeSchema(): string {
     id: randomUUID(),
     name: `table_${tableIndex}`,
     indexes: [],
-    columns: Array.from({ length: columnsPerTable }, (_column, columnIndex) => ({
-      id: randomUUID(),
-      name: `column_${columnIndex}`,
-      index: columnIndex,
-      type: 'VARCHAR',
-      length: 255,
-      attributes: ['VISIBLE', 'NOT_NULL'],
-    })),
+    columns: Array.from(
+      {
+        length: drags.some((drag) => drag.tableIndex === tableIndex)
+          ? draggedTableColumns
+          : columnsPerTable,
+      },
+      (_column, columnIndex) => ({
+        id: randomUUID(),
+        name: `column_${columnIndex}`,
+        index: columnIndex,
+        type: 'VARCHAR',
+        length: 255,
+        attributes: ['VISIBLE', 'NOT_NULL'],
+      }),
+    ),
   }));
 
   const positions = tables.map((table, tableIndex) => ({
@@ -95,6 +119,43 @@ async function measureGesture(
   return elapsed;
 }
 
+// Median time of a fixed allocation-heavy workload, run in the page before any throttling
+async function calibrationMs(page: Page): Promise<number> {
+  return await page.evaluate(() => {
+    // oxlint-disable-next-line unicorn/consistent-function-scoping -- page.evaluate sends only this callback to the browser
+    function work(): number {
+      const rows = Array.from({ length: 100_000 }, (_row, rowIndex) => ({
+        id: `row-${rowIndex}`,
+        cells: Array.from({ length: 6 }, (_cell, cellIndex) => ({
+          name: `column_${cellIndex}`,
+          value: rowIndex * cellIndex,
+        })),
+      }));
+
+      return (
+        rows.reduce(
+          (sum, row) => sum + row.cells.reduce((cells, cell) => cells + cell.value, 0),
+          0,
+        ) +
+        JSON.stringify(rows.slice(0, 10_000)).length +
+        rows.map((row) => row.id).toSorted().length
+      );
+    }
+
+    work();
+
+    const times = Array.from({ length: 7 }, () => {
+      const start = performance.now();
+
+      work();
+
+      return performance.now() - start;
+    });
+
+    return times.toSorted((a, b) => a - b)[3] ?? 0;
+  });
+}
+
 async function openLargeSchema(page: Page): Promise<CDPSession | undefined> {
   const baseUrl = process.env['PERF_BASE_URL'];
 
@@ -107,8 +168,14 @@ async function openLargeSchema(page: Page): Promise<CDPSession | undefined> {
 
   const cdp = await page.context().newCDPSession(page);
 
+  const rate = Math.max(1, (targetSlowdown * referenceCalibrationMs) / (await calibrationMs(page)));
+
+  console.log(
+    `CPU throttled ${rate.toFixed(2)}x for a ${targetSlowdown}x slowdown of the reference machine`,
+  );
+
   await cdp.send('Performance.enable');
-  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate });
 
   return cdp;
 }
@@ -129,7 +196,7 @@ test(`hovering a ${tableCount}-table canvas stays within ${hoverBudgetMs}ms of s
     pressed: false,
   });
 
-  console.log(`${moves} hover moves over ${tableCount} tables at 4x CPU`, {
+  console.log(`${moves} hover moves over ${tableCount} tables`, {
     hoverMs: Math.round(hoverMs),
   });
 
@@ -143,13 +210,7 @@ test(`dragging a table on a ${tableCount}-table canvas stays within ${dragBudget
 
   if (!cdp) return;
 
-  // A busy machine can slow one drag; the slow code this guards against is slow on both, so the faster one counts.
-  // Each drag takes a table nothing has moved yet, since a moved table can come to rest under its neighbour's columns
-  const drags = [
-    { tableIndex: 0, by: { x: 300, y: 180 } },
-    { tableIndex: 4, by: { x: -300, y: 180 } },
-  ];
-
+  // A busy machine can slow one drag; the slow code this guards against is slow on both, so the faster one counts
   const dragTimesMs: number[] = [];
 
   for (const drag of drags) {
@@ -179,7 +240,7 @@ test(`dragging a table on a ${tableCount}-table canvas stays within ${dragBudget
 
   const dragMs = Math.min(...dragTimesMs);
 
-  console.log(`${moves} drag moves over ${tableCount} tables at 4x CPU, better of 2`, {
+  console.log(`${moves} drag moves over ${tableCount} tables, better of 2`, {
     dragTimesMs: dragTimesMs.map(Math.round),
   });
 
@@ -212,7 +273,7 @@ test(`renaming ${renames} tables on a ${tableCount}-table canvas stays within ${
     renameMs += (await scriptMs(cdp)) - before;
   }
 
-  console.log(`${renames} renames over ${tableCount} tables at 4x CPU`, {
+  console.log(`${renames} renames over ${tableCount} tables`, {
     renameMs: Math.round(renameMs),
   });
 
