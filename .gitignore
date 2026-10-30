@@ -23,10 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-cypress/downloads
-cypress/videos
-cypress/screenshots
-
 vite.config.ts.timestamp-*
 
-runner-results
+
+# Vitest browser-mode failure screenshots
+.vitest
