@@ -7,19 +7,21 @@ type NetworkProfile = {
   cpuSlowdown: number;
 };
 
-// Lighthouse's mobile presets, applied the way DevTools applies them: RTT × 3.75 per request, throughput × 0.9
+// Lighthouse's mobile presets with its 4x CPU slowdown, applied the way DevTools applies them: RTT × 3.75 per
+// request, throughput × 0.9. fast-3g is DevTools' Fast 3G preset (now named Slow 4G) and gates the build;
+// regular-3g needs more than 4.4s for React and an empty React Flow canvas alone, so it is measured on demand
 const profiles = new Map<string, NetworkProfile>([
+  [
+    'fast-3g',
+    { latencyMs: 150 * 3.75, downloadKbps: 1600 * 0.9, uploadKbps: 750 * 0.9, cpuSlowdown: 4 },
+  ],
   [
     'regular-3g',
     { latencyMs: 300 * 3.75, downloadKbps: 700 * 0.9, uploadKbps: 700 * 0.9, cpuSlowdown: 4 },
   ],
-  [
-    'slow-4g',
-    { latencyMs: 150 * 3.75, downloadKbps: 1600 * 0.9, uploadKbps: 750 * 0.9, cpuSlowdown: 4 },
-  ],
 ]);
 
-const profileName = process.env['PERF_PROFILE'] ?? 'regular-3g';
+const profileName = process.env['PERF_PROFILE'] ?? 'fast-3g';
 
 const runs = Number(process.env['PERF_RUNS'] ?? '5');
 
