@@ -30,3 +30,8 @@ cypress/screenshots
 vite.config.ts.timestamp-*
 
 runner-results
+
+# Playwright
+playwright-report/
+test-results/
+e2e-artifacts/
