@@ -1,7 +1,7 @@
 import { canvas, menuItem, openEditor, tableHeaders } from './editor';
 import { expect, test } from './fixtures';
 
-test('creates a table', async ({ page, step }) => {
+test('creates a table', { tag: '@smoke' }, async ({ page, step }) => {
   const addTableButton = page.getByRole('button', { name: 'Add Table' });
 
   await step('open the editor', async () => {

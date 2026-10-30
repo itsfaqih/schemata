@@ -63,7 +63,7 @@ const sharedSchema = {
   ],
 };
 
-test('opens a shared schema link', async ({ page, step }) => {
+test('opens a shared schema link', { tag: '@smoke' }, async ({ page, step }) => {
   await step('open the editor from a link carrying schema "Acme"', async () => {
     await page.goto(`/?schema=${Buffer.from(JSON.stringify(sharedSchema)).toString('base64url')}`);
   });

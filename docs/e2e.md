@@ -2,14 +2,15 @@
 
 The suite drives the built app in a real browser through every user **flow**, and saves a screenshot after each step, so a reviewer can follow any flow without running it. Web suites use the e2e runner in `docs/stack.md`; dependencies come from `docs/hermetic-dependencies.md`, seeded users from `docs/agent-access.md`. For a native iOS or Android app, read `docs/e2e-mobile.md` too.
 
-## Two run modes
+## Run modes
 
 | Mode               | Command                       | Use                                                                                                   |
 | ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
 | **On-demand flow** | `test:e2e:flow "<flow name>"` | A change confined to one flow: verify that flow and capture its screenshots, without running the rest |
-| **Full suite**     | `test:e2e`                    | A change to code many flows share (auth, layout, shared components, schema, config), and CI           |
+| **Full suite**     | `test:e2e`                    | A change to code many flows share (auth, layout, shared components, schema, config)                   |
+| **Smoke**          | `test:e2e:smoke`              | CI: the flows tagged `@smoke`, one per core path a user cannot work without                           |
 
-Both save a screenshot per step to `e2e-artifacts/<flow>/NN-<step>.png`, also attached to the HTML report. A flow's folder holds only its latest run. A flow name is the spec's `test(...)` title, matched as a substring, so `"member renames a project"` runs that one flow. **Scope the run to the change**: one `test:e2e:flow` run per flow the change reaches. CI runs the full suite on every PR, which catches what the scoping missed.
+Each saves a screenshot per step to `e2e-artifacts/<flow>/NN-<step>.png`, also attached to the HTML report. A flow's folder holds only its latest run. A flow name is the spec's `test(...)` title, matched as a substring, so `"member renames a project"` runs that one flow. **Scope the run to the change**: one `test:e2e:flow` run per flow the change reaches. CI runs only the smoke flows, so a change that reaches flows beyond them runs the full suite locally before it merges. A smoke flow carries `{ tag: '@smoke' }` in its `test(...)` call.
 
 ## Video
 

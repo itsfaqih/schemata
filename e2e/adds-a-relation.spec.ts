@@ -1,7 +1,7 @@
 import { addColumn, addTableAt, columnNamed, menuItem, openEditor, relationMenu } from './editor';
 import { expect, test } from './fixtures';
 
-test('adds, reverses and deletes a relation', async ({ page, step }) => {
+test('adds, reverses and deletes a relation', { tag: '@smoke' }, async ({ page, step }) => {
   const dialog = page.getByRole('dialog', { name: 'Add Relation' });
   const organizationId = columnNamed(page.getByTestId('table-node').first(), 'id');
   const userOrganizationId = columnNamed(page.getByTestId('table-node').last(), 'organization_id');

@@ -1,7 +1,7 @@
 import { openEditor, tableNodes } from './editor';
 import { expect, test } from './fixtures';
 
-test('opens an empty untitled schema', async ({ page, step }) => {
+test('opens an empty untitled schema', { tag: '@smoke' }, async ({ page, step }) => {
   await step('open the editor for the first time', async () => {
     await openEditor(page);
   });

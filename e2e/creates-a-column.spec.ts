@@ -1,7 +1,7 @@
 import { addTableAt, columnNamed, columns, menuItem, openEditor, tableHeaders } from './editor';
 import { expect, test } from './fixtures';
 
-test('creates a column', async ({ page, step }) => {
+test('creates a column', { tag: '@smoke' }, async ({ page, step }) => {
   const table = page.getByTestId('table-node');
   const nameTextbox = table.getByLabel('Name');
   const primaryKey = table.getByLabel('Primary Key');

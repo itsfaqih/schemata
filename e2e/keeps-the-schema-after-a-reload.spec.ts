@@ -9,7 +9,7 @@ import {
 } from './editor';
 import { expect, test } from './fixtures';
 
-test('keeps the schema after a reload', async ({ page, step }) => {
+test('keeps the schema after a reload', { tag: '@smoke' }, async ({ page, step }) => {
   await step('open the editor and name the schema "Shop"', async () => {
     await openEditor(page);
     await page.getByRole('button', { name: 'Change title' }).click();
