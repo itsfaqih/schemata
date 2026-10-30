@@ -6,8 +6,8 @@ import localforage from 'localforage';
 export function useSaveLocalSchema(id: SchemaType['id']) {
   const queryClient = useQueryClient();
 
-  return useMutation<SchemaType, unknown, (currentSchema: SchemaType) => SchemaType>(
-    async (updateSchema) => {
+  return useMutation({
+    mutationFn: async (updateSchema: (currentSchema: SchemaType) => SchemaType) => {
       const currentSchema =
         (await readStoredSchema(`schema-${id}`)) ??
         queryClient.getQueryData<SchemaType>(['schema', id]);
@@ -23,12 +23,10 @@ export function useSaveLocalSchema(id: SchemaType['id']) {
         name: newSchema.name || currentSchema.name,
       });
     },
-    {
-      onSuccess(savedSchema) {
-        // Refetches in the background; the mutation settles without waiting for them
-        void queryClient.invalidateQueries(localSchemaQuery(savedSchema.id));
-        void queryClient.invalidateQueries(localSchemaQuery());
-      },
+    onSuccess(savedSchema) {
+      // Refetches in the background; the mutation settles without waiting for them
+      void queryClient.invalidateQueries({ queryKey: localSchemaQuery(savedSchema.id).queryKey });
+      void queryClient.invalidateQueries({ queryKey: localSchemaQuery().queryKey });
     },
-  );
+  });
 }

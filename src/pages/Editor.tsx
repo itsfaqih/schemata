@@ -22,7 +22,7 @@ export function Editor() {
   const initialSchema = LoaderDataSchema.parse(match.loaderData).schema ?? starterSchema;
   const mountedSchemaRef = useRef(initialSchema);
 
-  const { data: schema, isLoading, isSuccess } = useLocalSchemaQuery(initialSchema.id);
+  const { data: schema, isPending, isSuccess } = useLocalSchemaQuery(initialSchema.id);
 
   // Seeds storage once, with the schema the editor mounted with
   useEffect(() => {
@@ -34,7 +34,7 @@ export function Editor() {
     queryClient.setQueryData(['schema', mountedSchema.id], mountedSchema);
   }, [queryClient]);
 
-  if (isLoading) {
+  if (isPending) {
     return 'Loading';
   }
 

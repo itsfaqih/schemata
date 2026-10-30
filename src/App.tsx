@@ -11,7 +11,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router()} />
       <Toaster />
-      <ReactQueryDevtools position="bottom-right" />
+      <ReactQueryDevtools buttonPosition="bottom-right" />
     </QueryClientProvider>
   );
 }
