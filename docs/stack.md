@@ -20,6 +20,7 @@ The tools this project uses, chosen with the user during setup. The other docs n
 | Web e2e runner                  | Playwright                                                                                                 |
 | Browser driver for agents       | agent-browser (global CLI, not a project dependency)                                                       |
 | PR descriptions and evidence    | GitHub CLI (`gh` 2.101 or later)                                                                           |
+| Hosting and deploy              | Cloudflare Workers static assets, deployed by Wrangler (`wrangler.jsonc`) from Workers Builds              |
 
 Not used, because the project has nothing they apply to: dependency containers, third-party or cloud emulation, a backend framework, logging and analytics, infrastructure as code, pre-commit hooks.
 
